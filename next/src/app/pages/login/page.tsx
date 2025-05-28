@@ -7,7 +7,7 @@ export default function Login() {
                 className="w-2/3 h-auto mb-4"
                 width={600} 
                 height={600}
-                style={{marginTop:'10px'}}
+                style={{marginTop:'150px'}}
             /> 
             </div>
             <h1 className="welcomeText text-white text-center font-mono text-large md:text-xl lg:text-2xl mb-4">
@@ -20,6 +20,14 @@ export default function Login() {
             <h3 className=" text-white text-center font-mono text-xs md:text-l lg:text-xl"> 
                 wonderful events in <span className="text-orange-500">NUS</span>
             </h3>
+            <div className="flex justify-center items-center">
+             <img src="/login_image1.jpg"
+                className="w-2/3 h-auto mb-4"
+                width={600} 
+                height={600}
+                style={{marginTop:'30px'}}
+            />
+            </div>
             </div> {/* Left is half and left empty */}
             <div className="w-1/2 flex justify-center"> 
             {/*items-center: for location of text to center */}
