@@ -8,7 +8,7 @@ export default function Login() {
                 width={600} 
                 height={600}
                 style={{marginTop:'150px'}}
-            /> 
+            />
             </div>
             <h1 className="welcomeText text-white text-center font-mono text-large md:text-xl lg:text-2xl mb-4">
                 Welcome to <span className=" text-orange-500">N</span>ear
@@ -33,7 +33,6 @@ export default function Login() {
             {/*items-center: for location of text to center */}
                 <div>
                     <h1 className="text-lg">Welcome to NearUliveS</h1>
-                    
                 </div>
             </div>
         </main>
