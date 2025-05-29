@@ -55,6 +55,7 @@ export default function LoginPage() {
         </p>
         <br/>
         <Link href='/login'>LoginPage</Link>
+        <Link href='/components/NavBar'>NavBar</Link>
       </div>
     </main>
   );
