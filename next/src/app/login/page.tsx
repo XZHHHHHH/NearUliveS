@@ -10,7 +10,7 @@ export default function Login() {
    
    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push('components/NavBar');};
+    router.push('/home');};
     
     return(
         <main className="flex h-screen">
