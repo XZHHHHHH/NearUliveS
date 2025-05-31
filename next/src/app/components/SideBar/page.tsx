@@ -7,7 +7,7 @@ import { FC } from 'react';
 const font = "text-xl font-serif"
 const iconSize = "text-xl"
 {/*spacing between the icons*/}
-const spacing = "flex items-center space-x-10 py-4 text-gray-700 hover:bg-gray-200 w-50" 
+const spacing = "flex items-center space-x-10 py-6 text-gray-700 hover:bg-gray-200 w-50" 
 
 export const SideBar: FC = () => (
   <aside className="w-60 bg-slate-50 border-r-2 h-screen shadow-2xs border-gray-400 p-8">
