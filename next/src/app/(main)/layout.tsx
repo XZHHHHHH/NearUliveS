@@ -3,22 +3,23 @@ import { ReactNode } from 'react';
 import NavBar from '../components/NavBar/page';
 import { SideBar } from '../components/SideBar/page';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({children}: {children: ReactNode}) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col bg-gray-50">
-        {/* 1️⃣ Fixed top nav */}
+      <body>
+        {/* NavBar at the top*/}
         <NavBar />
 
-        {/* 2️⃣ Below the nav, horizontal split: sidebar + page content */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left column: your sidebar */}
+        {/* section for side bar & other dynamic page contents
+        (e.g home and notifications*/}
+        <div className="flex flex-row bg-yellow-50">
+
+          {/* Side bar at the left*/}
           <SideBar />
 
-          {/* Right column: whatever page is active */}
-          <main className="flex-1 overflow-auto p-6">{children}</main>
+          {/* Dynamic page contents:
+          specific syntax: {children} indicates the page content*/}
+          <main className="p-6">{children}</main>
         </div>
       </body>
-    </html>
   );
 }
