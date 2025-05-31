@@ -6,7 +6,7 @@ export default function NavBar() {
   const pill = "flex items-center h-8 rounded-full p-6"
 
   return (
-    <header className = 'relative flex w-full h-20 bg-slate-50 shadow-xl p-4 justify-between items-center'>
+    <header className = 'relative flex w-full h-30 bg-slate-50 shadow-xl p-4 justify-between items-center'>
       {/*logo*/}
       <div className={`${pill} flex-shrink-0 bg-yellow-100`}>
         <Image 
@@ -24,23 +24,21 @@ export default function NavBar() {
         placeholder='Search' 
         className='
         w-full
-        rounded-full
-        focus:outline-amber-200
-        focus:ring-amber-200'
-        aria-label='Search query'>
+        rounded-full'
+        aria-label='Search'>
         </input>
       </form>
     {/*user profile*/}
-      <div className='flex item-center space-x-2'>
+      <div className='flex item-center space-x-6'>
         <Image
         src={"/globe.svg"}
         alt="UserAvatar"
-        width={40}
+        width={60}
         height={20}
         className="rounded-full"
         />
-        <div className="hidden lg:block text-sm font-medium">Username<br/>
-          <span className="opacity-30 text-xs">@handle</span>
+        <div className="lg:block text-2xl font-medium">Username<br/>
+          <span className="opacity-30 text-xm">@Handle</span>
         </div>
       </div>
     </header>
