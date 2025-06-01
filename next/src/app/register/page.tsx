@@ -7,6 +7,7 @@ export default function Register() {
    const router = useRouter();
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [confirmPassword, setComifrmPassword] = useState('');
    
    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ return(
                     <h1 className="text-2xl font-bold mb-4 text-center 
                     ">Register</h1>
                     <br/>
-                    <h2>Email Address</h2>
+                    <h2><span className="text-red-500">*</span>Email Address</h2>
                     <form onSubmit={handleSubmit}>
                     <input
                         className="w-full p-2 border rounded mb-4"
@@ -27,7 +28,7 @@ return(
                         required
                         autoComplete="new-password"
                     />
-                    <h3>Password</h3>
+                    <h3><span className="text-red-500">*</span>Password</h3>
                     <input
                         className="w-full p-2 border rounded mb-6"
                         type="password"
@@ -36,12 +37,12 @@ return(
                         required
                         autoComplete="new-password"
                     />
-                    <h4>Confirm Password</h4>
+                    <h4><span className="text-red-500">*</span>Confirm Password</h4>
                     <input
                         className="w-full p-2 border rounded mb-6"
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={confirmPassword}
+                        onChange={(e) => setComifrmPassword(e.target.value)}
                         required
                         autoComplete="new-password"
                     />
