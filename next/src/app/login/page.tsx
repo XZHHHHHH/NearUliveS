@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
+import Link from 'next/link';
 
 export default function Login() {
    const router = useRouter();
@@ -82,9 +83,9 @@ export default function Login() {
                     </form>
                     <p className="mt-4 text-center text-sm">
                     Don’t have an account?{' '}
-                    <a href="/signup" className="text-orange-500 hover:underline">
+                    <Link href="/register" className="text-orange-500 hover:underline">
                         Register
-                    </a>
+                    </Link>
                     </p>
                 </div>
             </div>
