@@ -1,4 +1,4 @@
-  import '../globals.css';
+import '../globals.css';
 import { ReactNode } from 'react';
 import NavBar from '../components/NavBar/page';
 import { SideBar } from '../components/SideBar/page';
@@ -20,7 +20,8 @@ export default function RootLayout({children}: {children: ReactNode}) {
 
           {/* Dynamic page contents:
           specific syntax: {children} indicates the page content*/}
-          <main className="ml-60 mt-30 flex-1 overflow-y-auto">{children}</main>
+          <main className="ml-60 mt-30 flex-1 overflow-y-auto">{children}
+          </main>
         </div>
       </body>
   );

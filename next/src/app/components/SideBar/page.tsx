@@ -20,17 +20,17 @@ export const SideBar: FC = () => (
         <span className={`${iconSize}`}>🏠</span>
         <span className={`${font}`}>Home</span>
       </Link>
-      <Link href="/home" 
+      <Link href="/publish" 
       className={`${spacing}`}>
         <span className={`${iconSize}`}>➕</span>
-        <span className={`${font}`}>Create</span>
+        <span className={`${font}`}>Publish</span>
       </Link>
-      <Link href="/home" 
+      <Link href="/notifications" 
       className={`${spacing}`}>
         <span className={`${iconSize}`}>🔔</span>
         <span className={`${font}`}>Notifications</span>
       </Link>
-      <Link href="/home" 
+      <Link href="/chat" 
       className={`${spacing}`}>
         <span className={`${iconSize}`}>💬</span>
         <span className={`${font}`}>Chat</span>
