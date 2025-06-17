@@ -7,11 +7,38 @@ export default function Register() {
    const router = useRouter();
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [confirmPassword, setComifrmPassword] = useState('');
-   
-   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+   const [confirmPassword, setConifrmPassword] = useState('');
+   const [error, setError] = useState<string | null>(null);
+
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push('/login');};
+    
+    // new take in: alert
+    if (password !== confirmPassword) {
+        alert("Password do not match");
+        return;
+    }
+
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Registration failed");
+        return;
+      }
+
+      alert("Registration successful");
+      router.push("/login");
+    }
+
 return(
 <div className="flex items-center justify-center pt-50">
 <div className="bg-white p-8 w-8/9 border border-gray-200 rounded max-w-md ">
@@ -42,7 +69,7 @@ return(
                         className="w-full p-2 border rounded mb-6"
                         type="password"
                         value={confirmPassword}
-                        onChange={(e) => setComifrmPassword(e.target.value)}
+                        onChange={(e) => setConifrmPassword(e.target.value)}
                         required
                         autoComplete="new-password"
                     />
