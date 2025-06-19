@@ -1,7 +1,6 @@
 import { PrismaClient} from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import { error } from 'console';
 
 const prisma = new PrismaClient();
 
@@ -35,4 +34,20 @@ return NextResponse.json({
 });
 } 
 
-export{ register };
+
+async function login(email: string, password: string) {
+        const user = await prisma.user.findUnique({ where: {email}})
+        if (!user){
+            return {success: false, error: "Invalid email", field: "email", status: 401};
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if(!match) {
+            return {success: false, error: "Wrong password", field: "password", status: 401}
+        } else {
+            return {success: true, message: "Login successful", status: 200}
+            user: { email: user.email};
+        }
+}
+
+export{ register, login };

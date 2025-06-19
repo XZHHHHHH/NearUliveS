@@ -8,11 +8,48 @@ export default function Login() {
    const router = useRouter();
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [emailError, setEmailError] = useState('');
+   const [passwordError, setPasswordError] = useState('');
+
    
-   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push('/home');};
+
+    setEmailError('');
+    setPasswordError('');
     
+    // sending a message(data) to server in JSON format.
+    // declare a variable to store server's response in it.
+    // fetch(): to send a request to a URL
+    // POST is a HTTP method to send data, There are more GET for retrieve, DELETE and PUT.
+    // headers speciify the type of the data that is sending
+    // stringfy the typescript into a string for server to understands
+    try{
+    const res = await fetch('/api/auth/login', {
+        method:'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password}),
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        if (data.field == "email") {
+            setEmailError(data.error);
+        } else if (data.field == "password") {
+            setPasswordError(data.error);
+        } else {
+            alert("Login failed");
+        }
+      } else {
+      alert("Login Successful");
+      router.push("/home");
+      }
+    } catch (error) {
+        alert("Network error. Please try again.");
+    }
+    };
+
     return(
         <main className="flex h-screen">
             <div className="w-1/2 bg-[#1E40B0]">
@@ -66,6 +103,10 @@ export default function Login() {
                         required
                         autoComplete="new-password"
                     />
+                    {emailError && (
+                        <p className="text-red-500">{emailError}</p>
+                        )}
+
                     <h3>Password</h3>
                     <input
                         className="w-full p-2 border rounded mb-6"
@@ -75,6 +116,9 @@ export default function Login() {
                         required
                         autoComplete="new-password"
                     />
+                    {passwordError && (
+                        <p className="text-red-500">{passwordError}</p>
+                        )}
                         <button
                             type="submit"
                             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
