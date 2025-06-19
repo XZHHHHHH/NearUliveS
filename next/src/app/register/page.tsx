@@ -8,7 +8,7 @@ export default function Register() {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [confirmPassword, setConifrmPassword] = useState('');
-   const [error, setError] = useState<string | null>(null);
+   const [error, setError] = useState('')
 
    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,6 +19,11 @@ export default function Register() {
         return;
     }
 
+      // sending a message(data) to server in JSON format.
+      // declare a variable to store server's response in it.
+      // fetch(): to send a request to a URL
+      // POST is a HTTP method to send data, There are more GET for retrieve, DELETE and PUT.
+      // stringfy the typescript into a string for server to understands
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,11 +33,12 @@ export default function Register() {
         }),
       });
 
+      // delcare a data varaible to wait for server's response, needs to convert the response back to typescript object using res.json()
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Registration failed");
-        return;
+        setError(data.error || "Registration failed");
+        return Error;
       }
 
       alert("Registration successful");
@@ -78,6 +84,9 @@ return(
                             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                             >Register
                         </button>
+                        {error && (
+                        <p className="text-red-500">{error}</p>
+                        )}
                     </form>
                 </div>
                 </div>

@@ -1,6 +1,7 @@
 import { PrismaClient} from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
+import { error } from 'console';
 
 const prisma = new PrismaClient();
 
@@ -17,7 +18,7 @@ async function register(req: NextRequest) {
 // 409 Conflict  is an official HTTP status code. It means: The request could not be completed because of a conflict with the current state of the resource
 const exists = await prisma.user.findUnique({where:{ email }});
 if (exists) {
-    return NextResponse.json({error: "Email already exists"}, {status: 409});
+    return NextResponse.json({ error: "Email already exists"}, {status: 409});
 }
 
 // bcrypt.hash(password: string, saltRounds: number)
