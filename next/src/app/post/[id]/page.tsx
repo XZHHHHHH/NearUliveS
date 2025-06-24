@@ -1,6 +1,3 @@
-import PostCard from "../../components/PostCard/page";
-import Link from 'next/link';
-
 const mockPosts = [
   { id: 1, title: "Swimming Pool", imageUrl: "/swimming pool.png", author: "Alice"},
   { id: 2, title: "University Health Centre", imageUrl: "/UHC.webp", author: "Bob"},
@@ -22,16 +19,17 @@ const mockPosts = [
   { id: 18, title: "Terrence", imageUrl: "/canteen terrence.png", author: "Ohtani"},
 ];
 
-export default function HomePage() {
+
+export default function PostDetail({ params }: { params: { id: string } }) {
+  const post = mockPosts.find(p => p.id === Number(params.id));
+
+  if (!post) return <div className="p-10 text-red-500">Post not found.</div>;
+
   return (
-    <main>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8 m-8">
-        {mockPosts.map((post) => (
-          <Link key={post.id} href={`/post/${post.id}`}>
-            <PostCard title={post.title} imageUrl={post.imageUrl} author={post.author} />
-          </Link>
-        ))}
-      </div>
-    </main>
-      );
+    <div className="p-10 space-y-4">
+      <img src={post.imageUrl} className="rounded-xl max-h-[400px] w-full object-cover" />
+      <h1 className="text-3xl font-bold">{post.title}</h1>
+      <p className="text-gray-500">By {post.author}</p>
+    </div>
+  );
 }
