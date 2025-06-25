@@ -92,11 +92,11 @@ export default function Login() {
                 <div className="bg-white p-8 w-8/9 border border-gray-200 rounded max-w-md">
                     <h1 className="text-2xl font-bold mb-4 text-center 
                     ">Sign In</h1>
-                    <br/>
+                    
                     <h2>Email Address</h2>
                     <form onSubmit={handleSubmit}>
                     <input
-                        className="w-full p-2 border rounded mb-4"
+                        className="w-full p-2 border rounded"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -106,10 +106,9 @@ export default function Login() {
                     {emailError && (
                         <p className="text-red-500">{emailError}</p>
                         )}
-
-                    <h3>Password</h3>
+                    <h3 className="mt-1"> Password </h3>
                     <input
-                        className="w-full p-2 border rounded mb-6"
+                        className="w-full p-2 border rounded"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -121,7 +120,7 @@ export default function Login() {
                         )}
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mt-3"
                             >Log In
                         </button>
                     </form>
