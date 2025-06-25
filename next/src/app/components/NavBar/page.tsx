@@ -1,10 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import UserProfile from '../../(home-components)/userprofile/page';
 
 export default function NavBar() {
-
   const pill = "flex items-center h-8 rounded-full p-6"
-
   return (
     <header className = 'relative flex w-full h-30 bg-slate-50 shadow-xl p-4 justify-between items-center'>
       {/*logo*/}
@@ -28,19 +27,7 @@ export default function NavBar() {
         aria-label='Search'>
         </input>
       </form>
-    {/*user profile*/}
-      <div className='flex item-center space-x-6'>
-        <Image
-        src={"/globe.svg"}
-        alt="UserAvatar"
-        width={60}
-        height={20}
-        className="rounded-full"
-        />
-        <div className="lg:block text-2xl font-medium">Username<br/>
-          <span className="opacity-30 text-xm">@Handle</span>
-        </div>
-      </div>
+      <UserProfile />
     </header>
     );
 }
