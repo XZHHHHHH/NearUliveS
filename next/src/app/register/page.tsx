@@ -7,17 +7,13 @@ export default function Register() {
    const router = useRouter();
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [confirmPassword, setConifrmPassword] = useState('');
+   const [confirmPassword, setConfirmPassword] = useState('');
    const [error, setError] = useState('')
 
    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // new take in: alert
-    if (password !== confirmPassword) {
-        alert("Password do not match");
-        return;
-    }
 
       // sending a message(data) to server in JSON format.
       // declare a variable to store server's response in it.
@@ -30,6 +26,7 @@ export default function Register() {
         body: JSON.stringify({
           email,
           password,
+          confirmPassword
         }),
       });
 
@@ -37,14 +34,14 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Registration failed");
-        return Error;
+        setError(data.error);
+        return;
       }
 
       alert("Registration successful");
       router.push("/login");
     }
-
+// be aware of the error display at frontend
 return(
 <div className="flex items-center justify-center pt-50">
 <div className="bg-white p-8 w-8/9 border border-gray-200 rounded max-w-md ">
@@ -75,7 +72,7 @@ return(
                         className="w-full p-2 border rounded mb-6"
                         type="password"
                         value={confirmPassword}
-                        onChange={(e) => setConifrmPassword(e.target.value)}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                         autoComplete="new-password"
                     />

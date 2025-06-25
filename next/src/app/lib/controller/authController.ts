@@ -11,13 +11,17 @@ const prisma = new PrismaClient();
 // req: NextRequest represents te incoming HTTP request
 async function register(req: NextRequest) { 
     // read the JSON format request and extract is to JavaScript.
-    const {email, password} = await req.json(); 
+    const {email, password, confirmPassword} = await req.json(); 
 
 // findUnique is a Prisma method to search for a unique record
 // 409 Conflict  is an official HTTP status code. It means: The request could not be completed because of a conflict with the current state of the resource
 const exists = await prisma.user.findUnique({where:{ email }});
 if (exists) {
     return NextResponse.json({ error: "Email already exists"}, {status: 409});
+}
+
+if(confirmPassword != password) {
+    return NextResponse.json({ error: "Passwords do not match"}, {status: 400})
 }
 
 // bcrypt.hash(password: string, saltRounds: number)
@@ -45,9 +49,11 @@ async function login(email: string, password: string) {
         if(!match) {
             return {success: false, error: "Wrong password", field: "password", status: 401}
         } else {
-            return {success: true, message: "Login successful", status: 200}
-            user: { email: user.email};
+            return {success: true, message: "Login successful", status: 200,
+            user: { email: user.email}};
         }
 }
 
 export{ register, login };
+
+// async function publish() {}
