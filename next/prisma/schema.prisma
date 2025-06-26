@@ -8,17 +8,34 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+  // for seraching specific user based on id
+  id        Int          @id @default(autoincrement()) 
+  email     String       @unique
+  password  String       @unique
+
+  // Has relationship: User has profile and this profile field with @relation will link the user with their respective profile ID after profile creation
+  profile   UserProfile? @relation(fields:[profileId], references: [id])
+  profileId Int?         @unique
+
+  // Has relationship: User has posts
+  posts     Post[]       @relation("UserPosts")
 }
 
+model Post {
+  id        Int          @id @default(autoincrement())
+  title     String
+  content   String
+  imageUrl  String
+  createdAt DateTime     @default(now())
+  author    User         @relation("UserPosts", fields: [authorId], references: [id])
+  authorId  Int
+}
 
-
-
-
-
-
-
-
-
+model UserProfile {
+  id           Int       @id @default(autoincrement())
+  bio          String?
+  profileImage String?
+  username     String?
+  createdAt    DateTime  @default(now())
+  user         User?     @relation
+}
