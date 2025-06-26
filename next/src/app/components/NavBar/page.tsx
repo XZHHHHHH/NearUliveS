@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import UserProfile from '../../(home-components)/userprofile/page';
+import UserProfile from '../../components/UserProfile/page';
+import SearchBar from '../SearchBar/page';
 
 export default function NavBar() {
   const pill = "flex items-center h-8 rounded-full p-6"
@@ -15,18 +15,7 @@ export default function NavBar() {
         height={100}
         />
       </div>
-      {/*search bar*/}
-      <form className={`${pill} bg-gray-100 w-1/3 mx-6`}>
-        <input 
-        type='text' 
-        value={""} 
-        placeholder='Search' 
-        className='
-        w-full
-        rounded-full'
-        aria-label='Search'>
-        </input>
-      </form>
+      <SearchBar />
       <UserProfile />
     </header>
     );
