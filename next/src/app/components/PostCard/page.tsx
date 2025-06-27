@@ -1,11 +1,16 @@
 import Image from 'next/image';
 
 /// In js, we need to set type for arguments and in this Postcard function, can import the related prisma model to fill in the related arguments based on how we define the prisma models
-
 import type { Post, UserProfile } from '@prisma/client' 
 
+// an object name Props to contain arguments with its specific type
+type Props = {
+  post: Post;
+  userprofile: UserProfile;
+}
+
 {/*postcard appearance*/}
-export default function PostCard({ post, userprofile } : {userprofile: UserProfile, post: Post}) {
+export default function PostCard({ post, userprofile }: Props) {
   return (
     <div className="bg-white rounded-4xl overflow-hidden shadow-md w-[200px] hover:scale-105 hover:shadow-lg transition duration-200 ease-in-out cursor-pointer">
       <div>
