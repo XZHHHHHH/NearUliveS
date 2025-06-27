@@ -3,9 +3,13 @@ import Link from "next/link";
 import type { Post, UserProfile } from '@prisma/client' 
 import { PrismaClient } from '@prisma/client';
 
-// homepage is the page to handle logic(data fetching) while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
+type Props = {
+  post: Post;
+  userprofile: UserProfile;
+}
 
-export default async function HomePage({ post, userprofile } : {userprofile: UserProfile, post: Post}) {
+// homepage handles logic(data fetching) while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
+export default async function HomePage({ post, userprofile } : Props) {
   const prisma = new PrismaClient();
   const posts = await prisma.post.findMany({
     include: {
