@@ -14,23 +14,26 @@ export async function POST(req: NextRequest) {
 
   // If login is successful:
   if (result.success) {
-    // store a success response with message and user info in variable response
+    // Create a success response with message and user info
     const response = NextResponse.json({
-      message : result.message,
+      message: result.message,
       user: result.user,
     });
 
     // Set a secure HTTP-only cookie that stores the user's email
     // Only the server can access this cookie (httpOnly), and it lasts for 7 days
-    return response.cookies.set("userEmail", result.user.email, {
-      httpOnly: true,          // Prevents JavaScript access (protects against XSS)
-      path: "/",               // Cookie is valid across the whole site
-      secure: true,            // Ensures it's only sent over HTTPS (production-safe)
-      maxAge: 60 * 60 * 24 * 7 // Duration = 7 days
+    response.cookies.set("userEmail", result.user.email, {
+      httpOnly: true,           // Prevents JavaScript access (protects against XSS)
+      path: "/",                // Cookie is valid across the whole site
+      secure: true,             // Ensures it's only sent over HTTPS (safe for production)
+      maxAge: 60 * 60 * 24 * 7, // Duration = 7 days
     });
+
+    // Return the response object (with the cookie attached)
+    return response;
   }
 
-  // If login fails (wrong email/password):
+  // If login fails (wrong email/password or other reason):
   else {
     return NextResponse.json(
       // If a specific field caused the error, return it to the frontend
