@@ -8,7 +8,8 @@ type Props = {
   userprofile: UserProfile;
 }
 
-// homepage handles logic(data fetching) while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
+// 1. homepage handles postgird UI and data fecting 
+// 2. while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
 export default async function HomePage({ post, userprofile } : Props) {
   const prisma = new PrismaClient();
   const posts = await prisma.post.findMany({
