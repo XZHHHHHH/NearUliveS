@@ -12,7 +12,7 @@ export default function UserProfile({ profile, posts }: Props) {
     <div className="p-6">
       <div className="flex items-center space-x-4">
         <Image
-          src={profile.profileImage || '/default.png'}
+          src={profile.profileImage || '/swimming pool.png'}
           alt="Avatar"
           width={60}
           height={60}

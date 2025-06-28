@@ -13,14 +13,14 @@ model User {
   email     String       @unique
   password  String       @unique
 
-  // Has relationship: User has profile and this profile field with @relation will link the user with their respective profile ID after profile creation
-  profile   UserProfile? @relation(fields:[profileId], references: [id])
-  profileId Int?         @unique
+  // User can have or have no profile and in model userprofile should contain a related relation to user
+  profile   UserProfile? 
 
   // Has relationship: User has posts
   posts     Post[]       @relation("UserPosts")
 }
 
+// type without question mark(?) must be declared in neon db table to create a proper data set.
 model Post {
   id        Int          @id @default(autoincrement())
   title     String
@@ -37,5 +37,8 @@ model UserProfile {
   profileImage String?
   username     String?
   createdAt    DateTime  @default(now())
-  user         User?     @relation
+
+  // UserProfile once created must have a relation with user through userid field in its model which must be exactly the same as the id in model user to indicate the need for 
+  user         User     @relation(fields: [userid], references: [id])
+  userid       Int      @unique 
 }
