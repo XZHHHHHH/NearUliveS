@@ -1,5 +1,5 @@
 const mockPosts = [
-  { id: 1, title: "Swimming Pool", imageUrl: "/swimming pool.png", author: "Alice"},
+  { id: 1, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "chen"},
   { id: 2, title: "University Health Centre", imageUrl: "/UHC.webp", author: "Bob"},
   { id: 3, title: "Utown", imageUrl: "/town.webp", author: "Mike"},
   { id: 4, title: "Terrence", imageUrl: "/canteen terrence.png", author: "Ohtani"},
@@ -15,10 +15,12 @@ const mockPosts = [
   { id: 14, title: "University Health Centre", imageUrl: "/UHC.webp", author: "Bob"},
   { id: 15, title: "Utown", imageUrl: "/town.webp", author: "Mike"},
   { id: 16, title: "Terrence", imageUrl: "/canteen terrence.png", author: "Ohtani"},
-  { id: 17, title: "Utown", imageUrl: "/town.webp", author: "Mike"},
-  { id: 18, title: "Terrence", imageUrl: "/canteen terrence.png", author: "Ohtani"},
+  { id: 17, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "ohtani"},
+  { id: 18, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "chen"},
+  { id: 19, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "chen"},
+  { id: 20, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "chen"},
+  { id: 21, title: "ohtani", imageUrl: "/shohei-ohtani-1.webp", author: "chen"},
 ];
-
 
 export default function PostDetail({ params }: { params: { id: string } }) {
   const post = mockPosts.find(p => p.id === Number(params.id));

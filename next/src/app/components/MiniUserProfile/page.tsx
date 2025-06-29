@@ -6,10 +6,10 @@ export default function MiniUserProfile({ profile }: { profile: UserProfile }) {
   return (
     <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-full">
       <Image
-        src={profile.profileImage || "/swimming pool.png"}
+        src={profile.profileImage || "globe.svg"}
         alt="Avatar"
-        width={60}
-        height={60}
+        width={30}
+        height={30}
         className="rounded-full"
       />
       <span className="text-sm font-medium">{profile.username}</span>
