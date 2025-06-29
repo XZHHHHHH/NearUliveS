@@ -52,18 +52,18 @@ export default function Notification() {
           {/* Notification Content */}
           <div className="flex-1">
             <p className="text-sm">
-              <span className="font-bold">Sarah Chen</span>
+              <span className="font-bold">XZH</span>
               <span className="text-gray-600"> liked your post</span>
             </p>
             <p className="text-sm text-gray-600 mt-1">
-              Amazing sunset photography tips!
+              Great picture!
             </p>
             <p className="text-xs text-gray-400 mt-1">2m ago</p>
           </div>
           
           {/* Post Thumbnail */}
           <img
-            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=60&h=60&fit=crop"
+            src="https://a57.foxnews.com/static.foxnews.com/foxnews.com/content/uploads/2025/06/1200/675/shohei-ohtani-1.jpg?ve=1&tl=1"
             alt="Post"
             className="w-12 h-12 rounded-lg"
           />
