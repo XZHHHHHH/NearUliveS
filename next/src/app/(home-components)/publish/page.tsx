@@ -59,7 +59,7 @@ export default function PublishPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image URL (optional)
+                Image URL
               </label>
               <input
                 className="w-full border border-gray-300 p-3 rounded-md text-lg focus:outline-none focus:border-gray-400"
