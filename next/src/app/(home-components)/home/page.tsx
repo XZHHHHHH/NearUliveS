@@ -25,11 +25,10 @@ export default async function HomePage({ post, userprofile } : Props) {
 
   return (
     <main>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8 m-8">
+      {/*grid-layout and auto adjust the postcard size while its clickable area is fixed with its size */}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 p-8">
         {posts.map((post) => (
-          <Link key={post.id} href={`/post/${post.id}`}>
-            <PostCard post={post} userprofile={post.author.profile!} />
-          </Link>
+          <PostCard key={post.id} post={post} userprofile={post.author.profile!}/>
         ))}
       </div>
     </main>
