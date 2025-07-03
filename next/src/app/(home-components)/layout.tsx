@@ -29,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {/* Side bar here */}
           <SideBar />
         </aside>
-        <main className="ml-60 mt-30 flex-1 overflow-y-auto">{children}</main>
+        <main className="ml-45 mt-30 flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

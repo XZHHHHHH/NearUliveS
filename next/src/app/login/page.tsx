@@ -42,7 +42,6 @@ export default function Login() {
             alert("Login failed");
         }
       } else {
-      alert("Login Successful");
       router.push("/home");
       }
     } catch (error) {
