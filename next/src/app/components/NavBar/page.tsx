@@ -10,8 +10,8 @@ export default function NavBar({ profile }: { profile: UserProfile | null }) {
       <div className={`${pill} flex-shrink-0 bg-yellow-100`}>
         <Image src="/app_logo.svg" alt="AppLogo" width={200} height={100} />
       </div>
-      <SearchBar />
-      {profile && (
+          <SearchBar/>
+           {profile && (
         <a href="/userprofile">
           <MiniUserProfile profile={profile} />
         </a>
