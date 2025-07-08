@@ -1,6 +1,5 @@
-import PostCard from "@/app/components/PostCard/page";
+import PostCard from "@/app/components/PostCard";
 import Link from "next/link";
-import type { Post, UserProfile } from '@prisma/client' 
 import { PrismaClient } from '@prisma/client';
 
 // 1. homepage handles postgird UI and data fecting 

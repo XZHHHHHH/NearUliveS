@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { PrismaClient } from '@prisma/client';
-import NavBar from '../components/NavBar/page';
-import {SideBar} from '../components/SideBar/page';
+import NavBar from '../components/NavBar';
+import {SideBar} from '../components/SideBar';
 const prisma = new PrismaClient();
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

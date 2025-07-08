@@ -1,6 +1,8 @@
+'use client'
+
 import Image from 'next/image';
-import MiniUserProfile from '../MiniUserProfile/page';
-import SearchBar from '../SearchBar/page';
+import MiniUserProfile from 'app/components/MiniUserProfile';
+import SearchBar from 'app/components/SearchBar';
 import type { UserProfile } from '@prisma/client';
 
 export default function NavBar({ profile }: { profile: UserProfile | null }) {
