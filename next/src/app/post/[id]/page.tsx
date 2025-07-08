@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export default async function PostDetail({
   params,
-  searchParams,
 }) {
   const post = await prisma.post.findUnique({
     where: { id: Number(params.id) },
