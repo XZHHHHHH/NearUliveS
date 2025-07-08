@@ -7,6 +7,15 @@ type Props = {
   posts: Post[];
 };
 
+// every page.tsx is treated as a page component in react.js and the funciton used inside (example here is UserProfile function) can only accept (instead of customized props, E.g profile and posts which are named by the users)
+// 1. params and 
+// 2. searchParams as props (the props must be named like these two)
+
+//But why I only put this file with FullUserProfile.tsx without folder as it must be treated as a client component which(need to add 'use client' and must exist as a file)
+//1. can make use of customized props
+//2. able to make use of React's functionalities: useState, useEffect, useContext, event handlers.
+//3. Needed for interactive UI: forms, modals, real-time updates, etc.
+
 export default function UserProfile({ profile, posts }: Props) {
   return (
     <div className="min-h-screen p-6">
