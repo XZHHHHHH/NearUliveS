@@ -3,26 +3,23 @@ import Link from "next/link";
 import type { Post, UserProfile } from '@prisma/client' 
 import { PrismaClient } from '@prisma/client';
 
-type Props = {
-  post: Post;
-  userprofile: UserProfile;
-}
-
 // 1. homepage handles postgird UI and data fecting 
 // 2. while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
-export default async function HomePage({ post, userprofile } : Props) {
+export default async function HomePage() {
   const prisma = new PrismaClient();
   const posts = await prisma.post.findMany({
     include: {
       author: {
         include: {
           profile: true,
-        },
-      },
+        }
+      }
     },
-    orderBy: { createdAt: "desc" },
-  });
-
+    orderBy: {
+      createdAt: "desc"
+    }
+  }
+  )
   return (
     <main>
       {/*grid-layout and auto adjust the postcard size while its clickable area is fixed with its size */}
