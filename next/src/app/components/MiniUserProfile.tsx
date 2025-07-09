@@ -1,3 +1,4 @@
+'use Client'
 import Image from 'next/image';
 import type { UserProfile } from '@prisma/client';
 
