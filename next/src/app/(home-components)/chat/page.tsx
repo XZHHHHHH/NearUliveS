@@ -1,9 +1,19 @@
-export default function Notificatiton() {
-  return(
-  <main> 
-    <h1 className="text-3xl font-bold">
-      update coming soon
-    </h1>
-  </main>
-  );
+'use client';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function EntryPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const user = localStorage.getItem('user');
+      if (user) {
+        router.push('/home');
+      } else {
+        router.push('/login');
+      }
+    }
+  }, [router]);
+  return null;
 }
