@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ChatList, {UserWithProfile} from '@/app/(home-components)/chat/chatList/page';
-import ChatWindow from '@/app/(home-components)/chat/chatWindow/page';
+import ChatList, {UserWithProfile} from '@/app/(home-components)/chat/ChatList';
+import ChatWindow from '@/app/(home-components)/chat/ChatWindow';
 
 
 export default function ChatPage() {
