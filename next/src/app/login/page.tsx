@@ -36,7 +36,7 @@ export default function Login() {
         }
       } else {
         console.log('Login success, storing user →', data.user);
-        sessionStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(data.user));
         router.push('/home');
       }
     } catch (err) {
