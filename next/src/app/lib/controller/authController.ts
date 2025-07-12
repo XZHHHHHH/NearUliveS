@@ -39,9 +39,12 @@ async function register(req: NextRequest) {
     });
 } 
 
-// this function returns login result only, cookie should be set in the API route
 async function login(email: string, password: string) {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+        where: { email },
+        include: { profile: true } // Include profile data
+    });
+    
     if (!user) {
         return { success: false, error: "Invalid email", field: "email", status: 401 };
     }
@@ -51,12 +54,15 @@ async function login(email: string, password: string) {
         return { success: false, error: "Wrong password", field: "password", status: 401 };
     }
 
+    // Return complete user data needed for chat
     return {
         success: true,
         message: "Login successful",
         status: 200,
-        user: { email: user.email },
+        user: {
+            id: user.id,
+            email: user.email,
+            profile: user.profile
+        },
     };
 }
-
-export { register, login };
