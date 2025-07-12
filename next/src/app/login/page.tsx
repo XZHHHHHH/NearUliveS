@@ -1,53 +1,53 @@
 'use client';
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { FormEvent } from "react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { FormEvent } from 'react';
 import Link from 'next/link';
 
 export default function Login() {
-   const router = useRouter();
-   const [email, setEmail] = useState('');
-   const [password, setPassword] = useState('');
-   const [emailError, setEmailError] = useState('');
-   const [passwordError, setPasswordError] = useState('');
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-   
-   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     setEmailError('');
     setPasswordError('');
-    
-    // sending a message(data) to server in JSON format.
-    // declare a variable to store server's response in it.
-    // fetch(): to send a request to a URL
-    // POST is a HTTP method to send data, There are more GET for retrieve, DELETE and PUT.
-    // headers speciify the type of the data that is sending
-    // stringfy the typescript into a string for server to understands
-    try{
-    const res = await fetch('/api/auth/login', {
-        method:'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email, password}),
-    })
 
-    const data = await res.json();
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
 
-    if (!res.ok) {
-        if (data.field == "email") {
-            setEmailError(data.error);
-        } else if (data.field == "password") {
-            setPasswordError(data.error);
+      if (!res.ok) {
+        if (data.field === 'email') {
+          setEmailError(data.error);
+        } else if (data.field === 'password') {
+          setPasswordError(data.error);
         } else {
-            alert("Login failed");
+          setEmailError(data.error || 'Login failed');
         }
       } else {
-      router.push("/home");
+        console.log('Login success, storing user →', data.user);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        router.push('/home');
       }
-    } catch (error) {
-        alert("Network error. Please try again.");
+    } catch (err) {
+      console.error('Network error:', err);
+      setEmailError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    };
+  };
+
+    
 
     return(
         <main className="flex h-screen">

@@ -1,46 +1,64 @@
-// Import the custom login logic from the controller (handles DB & password check)
-import { login } from "../../../lib/controller/authController";
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
-// Import request/response types from Next.js
-import { NextRequest, NextResponse } from "next/server";
+const prisma = new PrismaClient();
 
-// This function handles POST requests to /api/auth/login
-export async function POST(req: NextRequest) {
-  // Extract email and password from the body of the incoming request
-  const { email, password } = await req.json();
+export async function POST(request: NextRequest) {
+    try {
+        const { email, password } = await request.json();
 
-  // Call the login function to verify the user's credentials
-  const result = await login(email, password);
+        if (!email || !password) {
+            return NextResponse.json(
+                { error: 'Email and password are required' },
+                { status: 400 }
+            );
+        }
 
-  // If login is successful:
-  if (result.success) {
-    // Create a success response with message and user info
-    const response = NextResponse.json({
-      message: result.message,
-      user: result.user,
+        // Use the updated login function
+        const result = await login(email, password);
+        
+        if (!result.success) {
+            return NextResponse.json(
+                { error: result.error, field: result.field },
+                { status: result.status }
+            );
+        }
+
+        return NextResponse.json(result);
+    } catch (error) {
+        console.error('Login error:', error);
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
+    }
+}
+
+async function login(email: string, password: string) {
+    const user = await prisma.user.findUnique({ 
+        where: { email },
+        include: { profile: true } // Include profile data
     });
+    
+    if (!user) {
+        return { success: false, error: "Invalid email", field: "email", status: 401 };
+    }
 
-    // Set a secure HTTP-only cookie that stores the user's email
-    // Only the server can access this cookie (httpOnly), and it lasts for 7 days
-    response.cookies.set("userEmail", result.user.email, {
-      httpOnly: true,           // Prevents JavaScript access (protects against XSS)
-      path: "/",                // Cookie is valid across the whole site
-      secure: true,             // Ensures it's only sent over HTTPS (safe for production)
-      maxAge: 60 * 60 * 24 * 7, // Duration = 7 days
-    });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+        return { success: false, error: "Wrong password", field: "password", status: 401 };
+    }
 
-    // Return the response object (with the cookie attached)
-    return response;
-  }
-
-  // If login fails (wrong email/password or other reason):
-  else {
-    return NextResponse.json(
-      // If a specific field caused the error, return it to the frontend
-      result.field
-        ? { error: result.error, field: result.field }
-        : { error: result.error },
-      { status: 401 } 
-    );
-  }
+    // Return complete user data needed for chat
+    return {
+        success: true,
+        message: "Login successful",
+        status: 200,
+        user: {
+            id: user.id,
+            email: user.email,
+            profile: user.profile
+        },
+    };
 }

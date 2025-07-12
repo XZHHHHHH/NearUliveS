@@ -23,7 +23,7 @@ export default function PostCard({ post, userprofile }: Props) {
         />
         <div className="px-3 py-2">
           <h1 className="text-xs font-bold truncate">{post.title}</h1>
-          <p className="text-xs text-gray-500">{userprofile.username}</p>
+          <p className="text-xs text-gray-500">{userprofile?.username ?? "Anonymous"}</p>
         </div>
       </div>
     </Link>

@@ -1,27 +1,24 @@
+// app/page.tsx
 'use client';
-import { useEffect } from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function EntryPage() {
   const router = useRouter();
-  const [IsSignedIn, SetSignedIn] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = sessionStorage.getItem('user');
 
-    if(user) {
-      SetSignedIn(true);
+    if (user) {
+      // if an authenticated user is found, send them to /home
+      router.replace('/home');
     } else {
-      SetSignedIn(false);
+      // otherwise send them to /login
+      router.replace('/login');
     }
-    },[]);
+  }, [router]);
 
-    useEffect(() => {
-      if(IsSignedIn) {
-        router.push('/home');
-      } else {
-        router.push('/login');
-      }
-      },[IsSignedIn]);
-    };
+  // nothing to render while redirecting
+  return null;
+}
