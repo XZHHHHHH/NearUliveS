@@ -236,7 +236,7 @@ export default function ChatList({
           <div className="text-gray-500 text-center">Loading...</div>
         ) : threads.length === 0 ? (
           <div className="text-gray-500 text-center">
-            No conversations yet. Click "New Chat" to start one!
+            No conversations yet. Click &quotNew Chat&quot to start one!
           </div>
         ) : (
           threads.map(thread => (
