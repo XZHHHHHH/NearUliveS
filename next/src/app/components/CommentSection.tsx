@@ -46,7 +46,7 @@ export default function CommentsSection({ postId }: { postId: number }) {
         {comments.map(c => (
           <li key={c.id} className="p-3 border rounded">
             <p className="text-sm text-gray-600">
-              {c.author.profile?.username ?? 'Anonymous'}  
+              {c.author?.profile?.username ?? 'Anonymous'} 
               <span className="ml-2 text-xs">{new Date(c.createdAt).toLocaleString()}</span>
             </p>
             <p className="mt-1">{c.content}</p>
