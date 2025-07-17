@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client';
 
-  const prisma = new PrismaClient()
+const prisma = new PrismaClient()
 
 export async function GET(
   req: Request,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
+  const { postId } = await params
   const comments = await prisma.comment.findMany({
-    where: { postId: Number(params.postId) },
+    where: { postId: Number(postId) },
     include: { author: { select: { profile: { select: { username: true } } } } },
     orderBy: { createdAt: 'asc' }
   })
@@ -17,12 +18,13 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
+  const { postId } = await params
   const { content, authorId } = await req.json()
   const comment = await prisma.comment.create({
     data: {
-      postId: Number(params.postId),
+      postId: Number(postId),
       content,
       authorId: authorId ?? null
     },
