@@ -69,7 +69,7 @@ export default function ChatList({
     if (!currentUser?.id) return;
     
     try {
-      const res = await fetch('/api/chat/conversations', {
+      const res = await fetch('/api/chat/conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
