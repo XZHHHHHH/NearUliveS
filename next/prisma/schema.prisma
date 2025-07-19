@@ -23,17 +23,19 @@ model User {
   messagesReceived Message[]      @relation("ReceivedMessages")
   conversations1   Conversation[] @relation("ConversationUser1")
   conversations2   Conversation[] @relation("ConversationUser2")
+  Comment          Comment[]      
 }
 
 // type without question mark(?) must be declared in neon db table to create a proper data set.
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
   content   String
   imageUrl  String?
-  createdAt DateTime @default(now())
-  author    User     @relation("UserPosts", fields: [authorId], references: [id])
+  createdAt DateTime  @default(now())
+  author    User      @relation("UserPosts", fields: [authorId], references: [id])
   authorId  Int
+  Comment   Comment[]
 }
 
 model UserProfile {
@@ -70,4 +72,14 @@ model Message {
   content        String
   createdAt      DateTime     @default(now())
   seen           Boolean      @default(false)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  content   String
+  createdAt DateTime @default(now())
 }

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import Image from 'next/image';
+import CommentSection from 'app/components/CommentSection'
 
 const prisma = new PrismaClient();
 
@@ -69,6 +70,7 @@ export default async function PostDetail({ params }) {
           </div>
         </footer>
       </article>
+      <CommentSection postId={post.id} />
     </main>
   );
 }
