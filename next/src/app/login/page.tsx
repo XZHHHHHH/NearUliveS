@@ -50,14 +50,14 @@ export default function Login() {
     
 
     return(
-        <main className="flex h-screen">
+        <main className="flex min-h-screen">
             <div className="w-1/2 bg-[#1E40B0]">
             <div className="flex justify-center items-center">
                 <img src="/login_image.png" 
                     className="w-4/5 h-auto mb-4"
                     width={600} 
                     height={600}
-                    style={{marginTop:'120px'}}
+                    style={{marginTop:'160px'}}
                 />
             </div>
                 <h1 className="welcomeText text-white text-center text-large md:text-xl lg:text-2xl mb-4">
@@ -75,7 +75,7 @@ export default function Login() {
                         className="w-4/5 h-auto mb-4"
                         width={600} 
                         height={600}
-                        style={{marginTop:'30px'}}
+                        style={{marginTop:'10px'}}
                     />
             </div>
             </div> 
