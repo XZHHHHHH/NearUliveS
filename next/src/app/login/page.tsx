@@ -92,27 +92,34 @@ export default function Login() {
                     <h1 className="text-2xl font-bold mb-4 text-center 
                     ">Sign In</h1>
                     
-                    <h2>Email Address</h2>
+                    <label 
+                      htmlFor='email'
+                      className="block mb-1 text-sm font-medium">Email Address</label>
                     <form onSubmit={handleSubmit}>
                     <input
                         className="w-full p-2 border rounded"
+                        id = "email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        autoComplete="new-password"
+                        autoComplete="username"
                     />
                     {emailError && (
                         <p className="text-red-500">{emailError}</p>
                         )}
-                    <h3 className="mt-1"> Password </h3>
+                    <label
+                      htmlFor="password"
+                      className="block mt-3 mb-1 text-sm font-medium"
+                    >Password</label>
                     <input
                         className="w-full p-2 border rounded"
+                        id = "password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        autoComplete="new-password"
+                        autoComplete="current-password"
                     />
                     {passwordError && (
                         <p className="text-red-500">{passwordError}</p>
