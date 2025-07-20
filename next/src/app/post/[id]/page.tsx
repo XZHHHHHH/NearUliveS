@@ -5,8 +5,11 @@ import CommentSection from 'app/components/CommentSection'
 const prisma = new PrismaClient();
 
 export default async function PostDetail({ params }) {
+  // Await the params before accessing its properties
+  const { id } = await params;
+  
   const post = await prisma.post.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
     include: {
       author: {
         include: { profile: true }
@@ -70,6 +73,7 @@ export default async function PostDetail({ params }) {
           </div>
         </footer>
       </article>
+      {/*comment section for post comments*/}
       <CommentSection postId={post.id} />
     </main>
   );
