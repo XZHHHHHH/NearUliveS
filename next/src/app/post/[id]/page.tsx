@@ -27,9 +27,9 @@ export default async function PostDetail({ params }) {
   }
 
   return (
-    <main className="p-6 max-w-3xl mx-auto">
+    <main className="p-6 max-w-5xl mx-auto">
       {/* Go Back Navigation */}
-      <div className="mb-4">
+      <div className = "mb-6">
         <Link 
           href="/home" 
           className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
