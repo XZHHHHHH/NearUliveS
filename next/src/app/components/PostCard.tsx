@@ -11,8 +11,11 @@ type Props = {
 {/*postcard appearance*/}
 export default function PostCard({ post, userprofile }: Props) {
   return (
-    <Link href={`/post/${post.id}`}>
-      <div className="w-[200px] bg-white rounded-4xl overflow-hidden shadow-md cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105 hover:shadow-lg">
+    <div className="flex justify-center">
+      <Link 
+        href={`/post/${post.id}`}
+        className="block w-[200px] bg-white rounded-4xl overflow-hidden shadow-md cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105 hover:shadow-lg"
+      >
         {post.imageUrl ? (
           <Image
             src={post.imageUrl}
@@ -30,7 +33,7 @@ export default function PostCard({ post, userprofile }: Props) {
           <h1 className="text-xs font-bold truncate">{post.title}</h1>
           <p className="text-xs text-gray-500">{userprofile?.username ?? "Anonymous"}</p>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

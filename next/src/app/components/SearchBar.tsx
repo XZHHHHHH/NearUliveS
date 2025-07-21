@@ -25,7 +25,7 @@ export default function SearchBar({ className = '', placeholder = 'Search...' }:
       className={`
         relative
         flex
-        items-center
+        items-centera
         h-10
         w-full
         max-w-md
