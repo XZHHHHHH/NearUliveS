@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Find or create user profile
-    let profile = await prisma.userProfile.upsert({
+    const profile = await prisma.userProfile.upsert({
       where: {
         userid: userId,
       },
