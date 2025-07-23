@@ -14,17 +14,15 @@ export default function NavBar({ profile }: { profile: UserProfile | null }) {
   
   return (
     <header className="relative flex w-full h-30 bg-slate-50 shadow-xl p-4 items-center gap-4">
-      {/* Left: Logo */}
-      <div className={`${pill} flex-shrink-0 bg-yellow-100`}>
-        <Image src="/app_logo.svg" alt="AppLogo" width={200} height={100} />
-      </div>
 
-      {/* Middle: Search Bar (grows with screen size) */}
+      <Link href="/home" className={`${pill} flex-shrink-0 bg-yellow-100`}>
+        <Image src="/app_logo.svg" alt="AppLogo" width={200} height={100} />
+      </Link>
+
       <div className="flex-1 min-w-[200px] max-w-[600px] mx-auto">
         <SearchBar/>
       </div>
 
-      {/* Right: Profile/Login */}
       <div className="flex-shrink-0">
         {profile ? (
           <Link href="/userprofile">
