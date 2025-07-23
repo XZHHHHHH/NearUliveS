@@ -2,6 +2,8 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { IoHomeOutline } from "react-icons/io5";
 import PostCard from '@/app/components/PostCard';
 import type { Post, User, UserProfile } from '@prisma/client';
 
@@ -49,9 +51,18 @@ function SearchResults() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">
-        {query ? `Search results for "${query}"` : 'Search Results'}
-      </h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">
+          {query ? `Search results for "${query}"` : 'Search Results'}
+        </h1>
+        <Link
+          href="/home"
+          className="flex items-center justify-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all"
+          aria-label="Return to home"
+        >
+          <IoHomeOutline size={24} />
+        </Link>
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
