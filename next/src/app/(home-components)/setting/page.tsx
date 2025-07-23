@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getImageUrl } from '@/lib/userUtils';
 import type { User } from '@prisma/client';
 
 type UserWithProfile = User & {
   profile?: {
     username?: string;
     profileImage?: string;
+    bio?: string;
   } | null;
 };
 
@@ -17,35 +19,151 @@ export default function SettingsPage() {
   const [user, setUser] = useState<UserWithProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
-  const [profileImage, setProfileImage] = useState('');
+  const [bio, setBio] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setUsername(parsedUser.profile?.username || '');
-      setProfileImage(parsedUser.profile?.profileImage || '');
-    } else {
-      router.replace('/login');
-    }
+    const fetchUserProfile = async () => {
+      try {
+        // Get user from localStorage first
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+          router.replace('/login');
+          return;
+        }
+
+        const parsedUser = JSON.parse(storedUser);
+        
+        // Fetch fresh profile data from API
+        const response = await fetch(`/api/users/profile?userId=${parsedUser.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+          setUsername(data.user.profile?.username || '');
+          setBio(data.user.profile?.bio || '');
+          setImageError(false);
+          
+          // Set preview URL from existing profile image
+          if (data.user.profile?.profileImage) {
+            setPreviewUrl(getImageUrl(data.user.profile.profileImage));
+          }
+        } else {
+          // Fallback to localStorage data
+          setUser(parsedUser);
+          setUsername(parsedUser.profile?.username || '');
+          setBio(parsedUser.profile?.bio || '');
+          setImageError(false);
+          if (parsedUser.profile?.profileImage) {
+            setPreviewUrl(getImageUrl(parsedUser.profile.profileImage));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        router.replace('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
   }, [router]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File size must be less than 5MB');
+        return;
+      }
+
+      setSelectedFile(file);
+      setError('');
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('userId', user?.id?.toString() || '');
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          const progress = Math.round((e.loaded / e.total) * 100);
+          setUploadProgress(progress);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+              resolve(response.fileName);
+            } else {
+              reject(new Error(response.error || 'Upload failed'));
+            }
+          } catch (e) {
+            reject(new Error('Invalid response from server'));
+          }
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('Upload failed'));
+      });
+
+      xhr.open('POST', '/api/upload/profile-image');
+      xhr.send(formData);
+    });
+  };
 
   const handleProfileUpdate = async () => {
     if (!user?.id) return;
     setIsUpdating(true);
     setError('');
+    setUploadProgress(0);
 
     try {
+      let profileImageFileName = user.profile?.profileImage;
+
+      // Upload image if a new file is selected
+      if (selectedFile) {
+        profileImageFileName = await uploadImage(selectedFile);
+      }
+
       const res = await fetch('/api/users/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
           username: username.trim() || undefined,
-          profileImage: profileImage.trim() || undefined,
+          bio: bio.trim() || undefined,
+          profileImage: profileImageFileName,
         }),
       });
 
@@ -59,10 +177,28 @@ export default function SettingsPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
       setUser(data.user);
       setIsEditing(false);
+      setSelectedFile(null);
+      setUploadProgress(0);
+      setImageError(false);
+
+      // Update preview URL to show the saved image
+      if (data.user.profile?.profileImage) {
+        setPreviewUrl(getImageUrl(data.user.profile.profileImage));
+      }
+
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('profileUpdated', {
+        detail: { user: data.user }
+      }));
+
+      // Clear any previous errors
+      setError('');
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update profile');
     } finally {
       setIsUpdating(false);
+      setUploadProgress(0);
     }
   };
 
@@ -71,12 +207,22 @@ export default function SettingsPage() {
     router.replace('/login');
   };
 
+  if (loading) {
+    return (
+      <main className="max-w-md mx-auto px-6 py-12">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2">Loading...</span>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="max-w-md mx-auto px-6 py-12">
       <h1 className="mb-8 text-3xl font-semibold">Settings</h1>
 
       <ul className="space-y-4">
-
         <li>
           <button
             type="button"
@@ -89,101 +235,141 @@ export default function SettingsPage() {
 
           {showAccountInfo && (
             <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-gray-800 shadow-inner">
-              <div className="flex items-center space-x-4 mb-4">
-                {!isEditing ? (
-                  <>
-                    <div className="h-16 w-16 rounded-full border border-gray-300 bg-gray-200 flex items-center justify-center text-xl font-semibold text-gray-600 overflow-hidden">
-                      {user?.profile?.profileImage ? (
-                        <img 
-                          src={user.profile.profileImage} 
-                          alt="Profile" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        user?.profile?.username?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold">{user?.profile?.username || 'User'}</p>
-                      <p className="text-sm text-gray-600">{user?.email}</p>
-                    </div>
-                  </>
-                ) : (
-                  <div className="w-full space-y-4">
-                    <div>
-                      <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                        Username
-                      </label>
-                      <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your username"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="profileImage" className="block text-sm font-medium text-gray-700 mb-1">
-                        Profile Image URL
-                      </label>
-                      <input
-                        type="text"
-                        id="profileImage"
-                        value={profileImage}
-                        onChange={(e) => setProfileImage(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter image URL"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {error && (
-                <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded-md">
-                  {error}
-                </div>
-              )}
+              {user && (
+                <>
+                  {!isEditing ? (
+                    <>
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div className="h-16 w-16 rounded-full border border-gray-300 bg-gray-200 flex items-center justify-center text-xl font-semibold text-gray-600 overflow-hidden flex-shrink-0">
+                          {user?.profile?.profileImage && !imageError ? (
+                            <img 
+                              src={getImageUrl(user.profile.profileImage)} 
+                              alt="Profile" 
+                              className="w-full h-full object-cover"
+                              style={{ aspectRatio: '1/1' }}
+                              onError={() => {
+                                console.error('Error loading profile image');
+                                setImageError(true);
+                              }}
+                            />
+                          ) : (
+                            <span className="text-xl font-semibold text-gray-600">
+                              {user?.profile?.username?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold">{user?.profile?.username || 'User'}</p>
+                          <p className="text-sm text-gray-600">{user?.email}</p>
+                          <p className="text-sm text-gray-500">{user?.profile?.bio || 'No bio yet'}</p>
+                        </div>
+                      </div>
 
-              <div className="flex justify-end space-x-2">
-                {isEditing ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditing(false);
-                        setUsername(user?.profile?.username || '');
-                        setProfileImage(user?.profile?.profileImage || '');
-                        setError('');
-                      }}
-                      className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleProfileUpdate}
-                      disabled={isUpdating}
-                      className={`px-3 py-1 text-sm text-white rounded-md ${
-                        isUpdating
-                          ? 'bg-blue-400 cursor-not-allowed'
-                          : 'bg-blue-500 hover:bg-blue-600'
-                      }`}
-                    >
-                      {isUpdating ? 'Saving...' : 'Save Changes'}
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700"
-                  >
-                    Edit Profile
-                  </button>
-                )}
-              </div>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+                      >
+                        Edit Profile
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {error && (
+                        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                          {error}
+                        </div>
+                      )}
+
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Profile Image
+                        </label>
+                        <div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          />
+                          {selectedFile && (
+                            <p className="text-xs text-blue-600 mt-2 break-words leading-tight">
+                              Selected: {selectedFile.name}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1 break-words">Max 5MB, JPG/PNG</p>
+                        </div>
+                        
+                        {uploadProgress > 0 && uploadProgress < 100 && (
+                          <div className="mt-2">
+                            <div className="bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${uploadProgress}%` }}
+                              ></div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">Uploading... {uploadProgress}%</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your username"
+                        />
+                      </div>
+
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Bio
+                        </label>
+                        <textarea
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          rows={3}
+                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Tell us about yourself..."
+                        />
+                      </div>
+
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => {
+                            setIsEditing(false);
+                            setSelectedFile(null);
+                            setError('');
+                            setUploadProgress(0);
+                            setUsername(user?.profile?.username || '');
+                            setBio(user?.profile?.bio || '');
+                            if (user?.profile?.profileImage) {
+                              setPreviewUrl(getImageUrl(user.profile.profileImage));
+                            } else {
+                              setPreviewUrl('');
+                            }
+                          }}
+                          className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition"
+                          disabled={isUpdating}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleProfileUpdate}
+                          disabled={isUpdating}
+                          className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isUpdating ? 'Saving...' : 'Save Changes'}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           )}
         </li>

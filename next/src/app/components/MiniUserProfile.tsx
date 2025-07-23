@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image';
 import type { UserProfile } from '@prisma/client';
+import { getImageUrl } from '@/lib/userUtils';
 
 // import the userprofile from neon db and pass it as argument to fetch the data in db based on the current user login detail.
 export default function MiniUserProfile({ profile }: { profile: UserProfile }) {
@@ -8,7 +9,7 @@ export default function MiniUserProfile({ profile }: { profile: UserProfile }) {
     <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-100 p-3 rounded-full transition-all duration-200 hover:shadow-md">
       <div className="relative w-10 h-10">
         <Image
-          src={profile.profileImage || "/globe.svg"}
+          src={getImageUrl(profile.profileImage)}
           alt="Avatar"
           width={40}
           height={40}

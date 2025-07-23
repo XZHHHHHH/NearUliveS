@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,35 +24,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 });
     }
 
+    // Convert to Base64
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'profiles');
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
-
-    // Generate unique filename
-    const fileExtension = file.name.split('.').pop();
-    const fileName = `${userId}-${Date.now()}.${fileExtension}`;
-    const filePath = join(uploadsDir, fileName);
-
-    // Write file to disk
-    await writeFile(filePath, buffer);
-
-    // Return the public URL
-    const imageUrl = `/uploads/profiles/${fileName}`;
+    // Generate a unique identifier for the image
+    const fileName = `${userId}-${Date.now()}-${file.name}`;
 
     return NextResponse.json({ 
-      message: 'Image uploaded successfully',
-      imageUrl 
+      success: true,
+      message: 'Image processed successfully',
+      fileName: base64String, // Return Base64 string directly
+      imageUrl: base64String
     });
 
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('Error processing image:', error);
     return NextResponse.json(
-      { error: 'Failed to upload image' },
+      { error: 'Failed to process image' },
       { status: 500 }
     );
   }

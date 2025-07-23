@@ -50,3 +50,33 @@ export function getAvatarLetter(user: UserWithProfile): string {
   const username = getDisplayUsername(user);
   return username.charAt(0).toUpperCase();
 }
+
+/**
+ * Gets the proper image URL for display
+ */
+export function getImageUrl(imagePath: string | null | undefined): string {
+  if (!imagePath) return '/globe.svg';
+  
+  // If it's a Base64 string (data URL), return it directly
+  if (imagePath.startsWith('data:image/')) {
+    return imagePath;
+  }
+  
+  // If it's already a full URL, use it directly
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // If it already starts with /, use it directly
+  if (imagePath.startsWith('/')) {
+    return imagePath;
+  }
+  
+  // Handle relative paths that might already include uploads/profiles
+  if (imagePath.includes('uploads/profiles/')) {
+    return `/${imagePath}`;
+  }
+  
+  // Otherwise, assume it's a filename and construct the path
+  return `/uploads/profiles/${imagePath}`;
+}
