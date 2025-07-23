@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { transformUserToSafe } from '@/lib/userUtils';
 
 const prisma = new PrismaClient();
 
@@ -28,7 +29,16 @@ export async function GET(request: Request) {
       const unreadCount = await prisma.message.count({
         where: { conversationId: conv.id, receiverId: userId, seen: false }
       });
-      return { conversationId: conv.id, user: otherUser, lastMessage, unreadCount };
+      
+      // Transform user to safe format with default values
+      const safeUser = transformUserToSafe(otherUser);
+      
+      return { 
+        conversationId: conv.id, 
+        user: safeUser, 
+        lastMessage, 
+        unreadCount 
+      };
     })
   );
 

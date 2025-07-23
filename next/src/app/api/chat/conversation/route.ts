@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { transformUserToSafe } from '@/lib/userUtils';
 
 const prisma = new PrismaClient();
 
@@ -24,13 +25,22 @@ export async function POST(request: NextRequest) {
           { user1Id: user1Id, user2Id: user2Id },
           { user1Id: user2Id, user2Id: user1Id }
         ]
+      },
+      include: {
+        user1: { include: { profile: true } },
+        user2: { include: { profile: true } }
       }
     });
 
     if (existingConversation) {
+      const safeUser1 = transformUserToSafe(existingConversation.user1);
+      const safeUser2 = transformUserToSafe(existingConversation.user2);
+      
       return NextResponse.json({ 
         conversationId: existingConversation.id,
-        message: 'Conversation already exists' 
+        message: 'Conversation already exists',
+        user1: safeUser1,
+        user2: safeUser2
       });
     }
 
@@ -39,12 +49,21 @@ export async function POST(request: NextRequest) {
       data: {
         user1Id: user1Id,
         user2Id: user2Id
+      },
+      include: {
+        user1: { include: { profile: true } },
+        user2: { include: { profile: true } }
       }
     });
 
+    const safeUser1 = transformUserToSafe(conversation.user1);
+    const safeUser2 = transformUserToSafe(conversation.user2);
+
     return NextResponse.json({ 
       conversationId: conversation.id,
-      message: 'Conversation created successfully' 
+      message: 'Conversation created successfully',
+      user1: safeUser1,
+      user2: safeUser2
     }, { status: 201 });
   } catch (error) {
     console.error('Error creating conversation:', error);
