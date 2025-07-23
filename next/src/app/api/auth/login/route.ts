@@ -25,7 +25,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        return NextResponse.json(result);
+        // Set the userEmail cookie for server-side access
+        const response = NextResponse.json(result);
+        response.cookies.set('userEmail', email, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 // 7 days
+        });
+
+        return response;
     } catch (error) {
         console.error('Login error:', error);
         return NextResponse.json(
