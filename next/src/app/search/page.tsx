@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { IoHomeOutline } from "react-icons/io5";
 import PostCard from '@/app/components/PostCard';
 import type { Post, User, UserProfile } from '@prisma/client';
 
@@ -11,7 +13,7 @@ type PostWithAuthor = Post & {
   };
 };
 
-export default function SearchPage() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
@@ -49,9 +51,18 @@ export default function SearchPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">
-        {query ? `Search results for "${query}"` : 'Search Results'}
-      </h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">
+          {query ? `Search results for "${query}"` : 'Search Results'}
+        </h1>
+        <Link
+          href="/home"
+          className="flex items-center justify-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all"
+          aria-label="Return to home"
+        >
+          <IoHomeOutline size={24} />
+        </Link>
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
@@ -76,5 +87,18 @@ export default function SearchPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <span className="ml-2 text-gray-600">Loading...</span>
+      </div>
+    }>
+      <SearchResults />
+    </Suspense>
   );
 }

@@ -11,7 +11,7 @@ const spacing = "flex items-center space-x-3.5 py-8 text-gray-700 hover:bg-gray-
 export const SideBar: FC = () => (
   <aside className="w-45 bg-slate-50 border-r-2 h-screen shadow-2xs border-gray-400 p-8">
     {/* side bar content*/}
-    <nav className="space-y-10">
+    <nav className="space-y-7">
     
       {/*back to homepage*/}
       <Link href="/home" 
@@ -33,6 +33,11 @@ export const SideBar: FC = () => (
       className={`${spacing}`}>
         <span className={`${iconSize}`}>💬</span>
         <span className={`${font}`}>Chat</span>
+      </Link>
+      <Link href="/setting" 
+      className={`${spacing}`}>
+        <span className={`${iconSize}`}>⚙️</span>
+        <span className={`${font}`}>Setting</span>
       </Link>
     </nav>
   </aside>
