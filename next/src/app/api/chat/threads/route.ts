@@ -30,12 +30,20 @@ export async function GET(request: Request) {
         where: { conversationId: conv.id, receiverId: userId, seen: false }
       });
       
-      // Transform user to safe format with default values
-      const safeUser = transformUserToSafe(otherUser);
+      // Return user with proper structure for chat components
+      const userForChat = {
+        id: otherUser.id,
+        email: otherUser.email || '',
+        profile: otherUser.profile ? {
+          username: otherUser.profile.username || null,
+          bio: otherUser.profile.bio || null,
+          profileImage: otherUser.profile.profileImage || null
+        } : null
+      };
       
       return { 
         conversationId: conv.id, 
-        user: safeUser, 
+        user: userForChat, 
         lastMessage, 
         unreadCount 
       };

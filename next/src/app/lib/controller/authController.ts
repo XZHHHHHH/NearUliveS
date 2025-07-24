@@ -29,13 +29,43 @@ async function register(req: NextRequest) {
     // saltRounds stands for how secure the hashing process is
     const hashPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-        data: { email, password: hashPassword },
+    // Create user and default profile in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+        // Create the user first
+        const user = await tx.user.create({
+            data: { email, password: hashPassword },
+        });
+
+        // Create default profile with username and default image
+        const defaultUsername = `Nuser${user.id}`;
+        const defaultProfileImage = '/globe.svg'; // Default image from public folder
+        
+        const profile = await tx.userProfile.create({
+            data: {
+                userid: user.id,
+                username: defaultUsername,
+                profileImage: defaultProfileImage,
+                bio: null,
+            },
+        });
+
+        return {
+            user,
+            profile
+        };
     });
 
     return NextResponse.json({ 
-        message: "User registered",
-        user: { email: user.email },
+        message: "User registered successfully",
+        user: { 
+            id: result.user.id,
+            email: result.user.email,
+            profile: {
+                username: result.profile.username,
+                profileImage: result.profile.profileImage,
+                bio: result.profile.bio
+            }
+        },
     });
 } 
 

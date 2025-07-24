@@ -284,6 +284,43 @@ export default function SettingsPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Profile Image
                         </label>
+                        
+                        {/* Preview Area - Above the browse button */}
+                        <div className="mb-4">
+                          <div className="flex items-center space-x-4">
+                            <div className="h-20 w-20 rounded-full border-2 border-gray-300 bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                              {previewUrl ? (
+                                <img 
+                                  src={previewUrl} 
+                                  alt="Profile Preview" 
+                                  className="w-full h-full object-cover rounded-full"
+                                  onError={() => {
+                                    console.error('Error loading preview image');
+                                    setPreviewUrl('');
+                                  }}
+                                />
+                              ) : user?.profile?.profileImage && !selectedFile ? (
+                                <img 
+                                  src={getImageUrl(user.profile.profileImage)} 
+                                  alt="Current Profile" 
+                                  className="w-full h-full object-cover rounded-full"
+                                  onError={() => {
+                                    console.error('Error loading current profile image');
+                                    setImageError(true);
+                                  }}
+                                />
+                              ) : (
+                                <span className="text-xl font-semibold text-gray-600">
+                                  {username?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || '?'}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {selectedFile ? 'New image selected' : (user?.profile?.profileImage ? 'Current profile image' : 'No profile image yet')}
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div>
                           <input
                             type="file"

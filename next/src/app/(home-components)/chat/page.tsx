@@ -30,15 +30,18 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="flex h-screen bg-gray-100">
-      <aside className="w-80 border-r bg-white">
+    <main className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* Sidebar */}
+      <aside className="w-80 min-w-[320px] flex-shrink-0 bg-white shadow-lg">
         <ChatList
           currentUser={currentUser}
           onSelectThread={(convId, user) => setSelected({ conversationId: convId, user })}
           selectedConversationId={selected?.conversationId}
         />
       </aside>
-      <section className="flex-1">
+      
+      {/* Main Chat Area */}
+      <section className="flex-1 flex flex-col min-w-0">
         <ChatWindow
           currentUser={currentUser}
           conversationId={selected?.conversationId ?? null}

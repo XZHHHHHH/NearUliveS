@@ -24,6 +24,34 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // If user doesn't have a profile, create a default one
+    if (!user.profile) {
+      const defaultUsername = `Nuser${user.id}`;
+      const defaultProfileImage = '/globe.svg';
+      
+      const newProfile = await prisma.userProfile.create({
+        data: {
+          userid: user.id,
+          username: defaultUsername,
+          profileImage: defaultProfileImage,
+          bio: null,
+        },
+      });
+
+      return NextResponse.json({ 
+        success: true, 
+        user: {
+          id: user.id,
+          email: user.email,
+          profile: {
+            username: newProfile.username,
+            bio: newProfile.bio,
+            profileImage: newProfile.profileImage,
+          }
+        }
+      });
+    }
+
     return NextResponse.json({ 
       success: true, 
       user: {
