@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import type { UserProfile, Post } from '@prisma/client';
+import { getImageUrl } from '@/lib/userUtils';
 
 type Props = {
   profile: UserProfile;
@@ -22,13 +23,15 @@ export default function UserProfile({ profile, posts }: Props) {
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="flex items-center space-x-8 border-b pb-8 mb-8">
-          <Image
-            src={profile.profileImage || '/globe.svg'}
-            alt="User Avatar"
-            width={100}
-            height={100}
-            className="rounded-full object-cover"
-          />
+          <div className="w-[100px] h-[100px] rounded-full overflow-hidden border-2 border-gray-300 flex-shrink-0">
+            <Image
+              src={getImageUrl(profile.profileImage)}
+              alt="User Avatar"
+              width={100}
+              height={100}
+              className="w-full h-full object-cover"
+            />
+          </div>
           <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{profile.username}</h1>
             <p className="text-lg text-gray-600 mb-3">@{profile.username}</p>

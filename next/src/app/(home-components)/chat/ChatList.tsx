@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import type { User, Message } from '@prisma/client';
+import { getUserDisplayData } from '@/lib/userUtils';
 
-export type UserWithProfile = User & { profile?: { username?: string } | null };
+export type UserWithProfile = User & { profile?: { username?: string; bio?: string; profileImage?: string } | null };
 
 type MessageWithSender = Message & { sender: UserWithProfile };
 
@@ -126,26 +127,27 @@ export default function ChatList({
   }
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      <div className="p-4 border-b sticky top-0 bg-white z-10">
+    <div className="h-full flex flex-col bg-white border-r border-gray-200">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Messages</h2>
+          <h2 className="text-xl font-bold text-gray-900">Messages</h2>
           <button
             onClick={() => setShowUserSearch(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-all hover:shadow-md active:scale-95 flex items-center space-x-2"
+            className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-600 transition-all hover:shadow-lg active:scale-95 flex items-center space-x-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <span>New Chat</span>
+            <span>New</span>
           </button>
         </div>
       </div>
 
       {/* User Search Modal */}
       {showUserSearch && (
-        <div className="absolute inset-0 bg-white bg-opacity-95 backdrop-blur-sm flex items-start justify-center pt-20 z-50">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-96 max-h-96 flex flex-col animate-in fade-in duration-200">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-96 max-w-[90vw] max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Start New Conversation</h3>
               <button
@@ -154,7 +156,7 @@ export default function ChatList({
                   setSearchQuery('');
                   setSearchResults([]);
                 }}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-1 transition-colors"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -176,50 +178,48 @@ export default function ChatList({
               </svg>
             </div>
             
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-[200px]">
               {searchLoading ? (
                 <div className="text-center text-gray-500 py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                  Searching...
+                  <p>Searching...</p>
                 </div>
               ) : searchResults.length === 0 ? (
                 searchQuery.trim() ? (
                   <div className="text-center text-gray-500 py-8">
-                    <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    No users found
+                    <p>No users found</p>
                   </div>
                 ) : (
                   <div className="text-center text-gray-500 py-8">
-                    <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    Type to search users
+                    <p>Type to search users</p>
                   </div>
                 )
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {searchResults.map(user => (
                     <div
                       key={user.id}
                       onClick={() => startConversation(user)}
-                      className="p-3 hover:bg-blue-50 cursor-pointer rounded-lg transition-colors flex items-center group"
+                      className="p-3 hover:bg-blue-50 cursor-pointer rounded-lg transition-all duration-200 flex items-center group border border-transparent hover:border-blue-200"
                     >
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-sm font-medium text-white">
-                        {(user.profile?.username || user.email)
-                          .charAt(0)
-                          .toUpperCase()}
+                      <div className="w-11 h-11 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-sm font-medium text-white shadow-sm">
+                        {getUserDisplayData(user).avatarLetter}
                       </div>
-                      <div className="ml-3 flex-1">
-                        <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {user.profile?.username || user.email}
+                      <div className="ml-3 flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                          {getUserDisplayData(user).username}
                         </p>
                         {user.profile?.username && (
-                          <p className="text-sm text-gray-500">{user.email}</p>
+                          <p className="text-sm text-gray-500 truncate">{user.email}</p>
                         )}
                       </div>
-                      <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>
@@ -231,54 +231,64 @@ export default function ChatList({
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto p-2">
+      {/* Conversations List */}
+      <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="text-gray-500 text-center">Loading...</div>
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <span className="ml-2 text-gray-500">Loading...</span>
+          </div>
         ) : threads.length === 0 ? (
-          <div className="text-gray-500 text-center">
-            No conversations yet. Click &quotNew Chat&quot to start one!
+          <div className="text-center py-12 px-4">
+            <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <p className="text-gray-500 mb-2">No conversations yet</p>
+            <p className="text-sm text-gray-400">Click &ldquo;New&rdquo; to start chatting!</p>
           </div>
         ) : (
-          threads.map(thread => (
-            <div
-              key={thread.conversationId}
-              onClick={() => onSelectThread(thread.conversationId, thread.user)}
-              className={`p-3 mb-1 rounded-lg cursor-pointer transition-colors ${
-                selectedConversationId === thread.conversationId
-                  ? 'bg-blue-50 border-l-4 border-blue-500'
-                  : 'hover:bg-gray-50'
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-sm font-medium">
-                  {(thread.user.profile?.username || thread.user.email)
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-                <div className="ml-3 flex-1">
-                  <div className="flex justify-between">
-                    <p className="font-medium truncate">
-                      {thread.user.profile?.username || thread.user.email}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(thread.lastMessage.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
+          <div className="p-2 space-y-1">
+            {threads.map(thread => (
+              <div
+                key={thread.conversationId}
+                onClick={() => onSelectThread(thread.conversationId, thread.user)}
+                className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                  selectedConversationId === thread.conversationId
+                    ? 'bg-blue-50 border-l-4 border-blue-500 shadow-sm'
+                    : 'hover:bg-gray-50 border-l-4 border-transparent'
+                }`}
+              >
+                <div className="flex items-center">
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-sm font-medium text-white shadow-sm">
+                      {getUserDisplayData(thread.user).avatarLetter}
+                    </div>
+                    {thread.unreadCount > 0 && (
+                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium">
+                        {thread.unreadCount > 9 ? '9+' : thread.unreadCount}
+                      </div>
+                    )}
+                  </div>
+                  <div className="ml-3 flex-1 min-w-0">
+                    <div className="flex justify-between items-center mb-1">
+                      <p className="font-medium text-gray-900 truncate">
+                        {getUserDisplayData(thread.user).username}
+                      </p>
+                      <p className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                        {new Date(thread.lastMessage.createdAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-600 truncate">
+                      {thread.lastMessage.content}
                     </p>
                   </div>
-                  <p className="text-sm text-gray-600 truncate mt-1">
-                    {thread.lastMessage.content}
-                  </p>
                 </div>
-                {thread.unreadCount > 0 && (
-                  <div className="ml-2 bg-red-500 text-white text-xs px-1 rounded-full">
-                    {thread.unreadCount > 9 ? '9+' : thread.unreadCount}
-                  </div>
-                )}
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>

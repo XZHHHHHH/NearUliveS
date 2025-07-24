@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { transformUserToSafe } from '@/lib/userUtils';
 
 const prisma = new PrismaClient();
 
@@ -28,7 +29,24 @@ export async function GET(request: Request) {
       const unreadCount = await prisma.message.count({
         where: { conversationId: conv.id, receiverId: userId, seen: false }
       });
-      return { conversationId: conv.id, user: otherUser, lastMessage, unreadCount };
+      
+      // Return user with proper structure for chat components
+      const userForChat = {
+        id: otherUser.id,
+        email: otherUser.email || '',
+        profile: otherUser.profile ? {
+          username: otherUser.profile.username || null,
+          bio: otherUser.profile.bio || null,
+          profileImage: otherUser.profile.profileImage || null
+        } : null
+      };
+      
+      return { 
+        conversationId: conv.id, 
+        user: userForChat, 
+        lastMessage, 
+        unreadCount 
+      };
     })
   );
 
