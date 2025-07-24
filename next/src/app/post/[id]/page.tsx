@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
-import CommentSection from 'app/components/CommentSection'
+import CommentSection from 'src/app/components/CommentSection'
 
 const prisma = new PrismaClient();
 
