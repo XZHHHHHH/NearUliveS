@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,29 +9,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ error: 'Invalid file type. Only images are allowed.' }, { status: 400 });
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: 'File too large. Maximum size is 5MB.' }, { status: 400 });
+    }
+
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create filename with timestamp to avoid conflicts
-    const timestamp = Date.now();
-    const filename = `${timestamp}-${file.name}`;
-    
-    // Save to public/uploads directory
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    const filepath = join(uploadsDir, filename);
-    
-    // Write the file
-    await writeFile(filepath, buffer);
+    // Convert to Base64 data URL
+    const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
 
-    // Return the URL that can be used to access the image
-    const imageUrl = `/uploads/${filename}`;
-
-    return NextResponse.json({ imageUrl });
+    console.log('Image converted to Base64 successfully');
+    return NextResponse.json({ 
+      success: true, 
+      imageUrl: base64String,
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type 
+    });
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error processing image:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: 'Failed to process image' },
       { status: 500 }
     );
   }

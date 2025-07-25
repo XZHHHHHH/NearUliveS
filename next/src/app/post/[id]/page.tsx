@@ -111,13 +111,21 @@ export default async function PostDetail({ params }) {
 
         {post.imageUrl && (
           <div className="mb-4">
-            <Image
-              src={post.imageUrl}
-              alt={post.title}
-              width={800}
-              height={400}
-              className="w-full h-64 object-cover rounded border"
-            />
+            {post.imageUrl.startsWith('data:image/') ? (
+              <img
+                src={post.imageUrl}
+                alt={post.title}
+                className="w-full h-64 object-cover rounded border"
+              />
+            ) : (
+              <Image
+                src={post.imageUrl}
+                alt={post.title}
+                width={800}
+                height={400}
+                className="w-full h-64 object-cover rounded border"
+              />
+            )}
           </div>
         )}
 

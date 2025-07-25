@@ -13,7 +13,10 @@ export default function LikeButton({ postId, initialLiked = false, initialLikeCo
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (isLoading) return;
     
     setIsLoading(true);

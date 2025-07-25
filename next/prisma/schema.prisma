@@ -8,106 +8,96 @@ datasource db {
 }
 
 model User {
-  // for seraching specific user based on id
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-
-  // User can have or have no profile and in model userprofile should contain a related relation to user
-  profile UserProfile?
-
-  // Has relationship: User has posts
-  posts Post[] @relation("UserPosts")
-
-  messagesSent     Message[]      @relation("SendMessages")
-  messagesReceived Message[]      @relation("ReceivedMessages")
-  conversations1   Conversation[] @relation("ConversationUser1")
-  conversations2   Conversation[] @relation("ConversationUser2")
-  Comment          Comment[]      
-  Like             Like[]
-  notifications    Notification[]
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
+  password          String
+  Comment           Comment[]
+  conversations1    Conversation[] @relation("ConversationUser1")
+  conversations2    Conversation[] @relation("ConversationUser2")
+  Like              Like[]
+  messagesReceived  Message[]      @relation("ReceivedMessages")
+  messagesSent      Message[]      @relation("SendMessages")
   sentNotifications Notification[] @relation("NotificationFrom")
+  notifications     Notification[]
+  posts             Post[]         @relation("UserPosts")
+  profile           UserProfile?
 }
 
-// type without question mark(?) must be declared in neon db table to create a proper data set.
 model Post {
   id        Int       @id @default(autoincrement())
   title     String
   content   String
-  imageUrl  String?
   createdAt DateTime  @default(now())
-  author    User      @relation("UserPosts", fields: [authorId], references: [id])
   authorId  Int
+  imageUrl  String?
   Comment   Comment[]
   Like      Like[]
+  author    User      @relation("UserPosts", fields: [authorId], references: [id])
 }
 
 model UserProfile {
   id           Int      @id @default(autoincrement())
   bio          String?
   profileImage String?
-  username     String?
   createdAt    DateTime @default(now())
-
-  // UserProfile once created must have a relation with user through userid field in its model which must be exactly the same as the id in model user to indicate the need for 
-  user   User @relation(fields: [userid], references: [id])
-  userid Int  @unique
+  userid       Int      @unique
+  username     String?
+  user         User     @relation(fields: [userid], references: [id])
 }
 
 model Conversation {
   id        Int       @id @default(autoincrement())
-  user1     User      @relation("ConversationUser1", fields: [user1Id], references: [id])
   user1Id   Int
-  user2     User      @relation("ConversationUser2", fields: [user2Id], references: [id])
   user2Id   Int
-  messages  Message[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  user1     User      @relation("ConversationUser1", fields: [user1Id], references: [id])
+  user2     User      @relation("ConversationUser2", fields: [user2Id], references: [id])
+  messages  Message[]
 }
 
 model Message {
   id             Int          @id @default(autoincrement())
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId Int
-  sender         User         @relation("SendMessages", fields: [senderId], references: [id])
   senderId       Int
-  receiver       User         @relation("ReceivedMessages", fields: [receiverId], references: [id])
   receiverId     Int
   content        String
   createdAt      DateTime     @default(now())
   seen           Boolean      @default(false)
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  receiver       User         @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender         User         @relation("SendMessages", fields: [senderId], references: [id])
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  post      Post     @relation(fields: [postId], references: [id])
   postId    Int
-  author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
   content   String
   createdAt DateTime @default(now())
+  author    User?    @relation(fields: [authorId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
 }
 
 model Like {
   id        Int      @id @default(autoincrement())
-  post      Post     @relation(fields: [postId], references: [id])
   postId    Int
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  // Ensure a user can only like a post once
   @@unique([postId, userId])
 }
 
 model Notification {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int      // Who receives the notification
-  type       String   // "like" or "comment"
-  postId     Int?     // Which post was liked/commented
-  fromUser   User     @relation("NotificationFrom", fields: [fromUserId], references: [id])
-  fromUserId Int      // Who liked/commented
+  userId     Int
+  type       String
+  postId     Int?
+  fromUserId Int
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
+  fromUser   User     @relation("NotificationFrom", fields: [fromUserId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
