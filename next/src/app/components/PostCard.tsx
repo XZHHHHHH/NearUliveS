@@ -4,7 +4,7 @@ import type { Post, UserProfile } from '@prisma/client'
 
 // an object name Props to contain arguments with its specific type
 type Props = {
-  post: Post;
+  post: Post & { likes?: number };
   userprofile: UserProfile;
 }
 
