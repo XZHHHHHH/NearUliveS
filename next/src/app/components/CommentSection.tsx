@@ -40,7 +40,7 @@ export default function CommentsSection({ postId }: { postId: number }) {
 
    return (
     <section className="mt-6 bg-gray-50 rounded-2xl p-6">
-      <h2 className="text-lg font-semibold mb-6 text-gray-800">Comments</h2>
+      <h2 className="text-lg font-semibold mb-6 text-gray-800">💬 Comments</h2>
 
       <div className="space-y-4 mb-6">
         {comments.map(c => (
@@ -73,7 +73,7 @@ export default function CommentsSection({ postId }: { postId: number }) {
         <input
           type="text"
           className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-300 transition-colors"
-          placeholder="Write a comment…"
+          placeholder="Write a comment… "
           value={newComment}
           onChange={e => setNewComment(e.target.value)}
         />
