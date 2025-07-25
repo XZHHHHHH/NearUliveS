@@ -38,7 +38,9 @@ export default function ChatList({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/chat/threads?userId=${currentUser.id}`);
+      const res = await fetch(`/api/chat/threads?userId=${currentUser.id}`, {
+        credentials: 'include'
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setThreads(data.threads || []);
@@ -54,7 +56,9 @@ export default function ChatList({
     if (!query.trim() || !currentUser?.id) return;
     setSearchLoading(true);
     try {
-      const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}&excludeId=${currentUser.id}`);
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}&excludeId=${currentUser.id}`, {
+        credentials: 'include'
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setSearchResults(data.users || []);
@@ -75,6 +79,7 @@ export default function ChatList({
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           user1Id: currentUser.id,
           user2Id: targetUser.id,

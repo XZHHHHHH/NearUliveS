@@ -43,6 +43,7 @@ export default function ChatWindow({
       await fetch('/api/chat/markSeen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ conversationId, userId: currentUser.id })
       });
     } catch (err) {
@@ -72,6 +73,7 @@ export default function ChatWindow({
       const res = await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           conversationId,
           senderId: currentUser.id,

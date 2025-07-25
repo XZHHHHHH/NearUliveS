@@ -25,7 +25,9 @@ function SearchResults() {
       try {
         setLoading(true);
         setError('');
-        const res = await fetch(`/api/posts/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/posts/search?q=${encodeURIComponent(query)}`, {
+          credentials: 'include'
+        });
         const data = await res.json();
         
         if (!res.ok) {

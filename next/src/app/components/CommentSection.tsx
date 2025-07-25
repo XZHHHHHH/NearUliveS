@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 type Comment = {
   id: number
   content: string
   createdAt: string
-  author: { profile?: { username?: string } }
+  author: { id: number; profile?: { username?: string; profileImage?: string } }
 }
 
 export default function CommentsSection({ postId }: { postId: number }) {
@@ -15,7 +17,9 @@ export default function CommentsSection({ postId }: { postId: number }) {
 
   // fetch existing comments for UI components to fetch 
   useEffect(() => {
-    fetch(`/api/comments/${postId}`)
+    fetch(`/api/comments/${postId}`, {
+      credentials: 'include'
+    })
       .then(res => res.json())
       .then(setComments)
   }, [postId])
@@ -28,6 +32,7 @@ export default function CommentsSection({ postId }: { postId: number }) {
     const res = await fetch(`/api/comments/${postId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({
         content: newComment,
 
@@ -46,16 +51,34 @@ export default function CommentsSection({ postId }: { postId: number }) {
         {comments.map(c => (
           <div key={c.id} className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start space-x-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-pink-400 to-orange-400 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-medium">
-                  {(c.author?.profile?.username ?? 'A')[0].toUpperCase()}
-                </span>
-              </div>
+              <Link 
+                href={`/userprofile?userId=${c.author?.id}`}
+                className="hover:opacity-80 transition-opacity"
+              >
+                {c.author?.profile?.profileImage ? (
+                  <Image
+                    src={c.author.profile.profileImage}
+                    alt={c.author.profile.username ?? "User"}
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-9 h-9 bg-gradient-to-br from-pink-400 to-orange-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-medium">
+                      {(c.author?.profile?.username ?? 'A')[0].toUpperCase()}
+                    </span>
+                  </div>
+                )}
+              </Link>
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="font-medium text-gray-800 text-sm">
+                  <Link 
+                    href={`/userprofile?userId=${c.author?.id}`}
+                    className="font-medium text-gray-800 text-sm hover:opacity-80 transition-opacity"
+                  >
                     {c.author?.profile?.username ?? 'Anonymous'}
-                  </span>
+                  </Link>
                   <span className="text-gray-400 text-xs">
                     {new Date(c.createdAt).toLocaleDateString()}
                   </span>

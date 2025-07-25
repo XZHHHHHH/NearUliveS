@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import CommentSection from '../../components/CommentSection'
+import LikeButton from '../../components/LikeButton';
+import { cookies } from 'next/headers';
 
 const prisma = new PrismaClient();
 
@@ -9,11 +11,24 @@ export default async function PostDetail({ params }) {
   // Await the params before accessing its properties
   const { id } = await params;
   
+  const cookieStore = await cookies();
+  const userEmail = cookieStore.get('userEmail')?.value;
+  
+  // Get current user for like checking
+  const currentUser = userEmail ? await prisma.user.findUnique({
+    where: { email: userEmail }
+  }) : null;
+  
   const post = await prisma.post.findUnique({
     where: { id: Number(id) },
     include: {
       author: {
         include: { profile: true }
+      },
+      Like: {
+        select: {
+          userId: true
+        }
       }
     },
   });
@@ -25,6 +40,9 @@ export default async function PostDetail({ params }) {
       </div>
     );
   }
+
+  const likeCount = post.Like.length;
+  const isLikedByUser = currentUser ? post.Like.some(like => like.userId === currentUser.id) : false;
 
   return (
     <main className="p-6 max-w-5xl mx-auto">
@@ -58,9 +76,29 @@ export default async function PostDetail({ params }) {
             {post.title}
           </h1>
           <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>
-              By {post.author.profile?.username ?? "Unknown author"}
-            </span>
+            <Link 
+              href={`/userprofile?userId=${post.author.id}`}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            >
+              {post.author.profile?.profileImage ? (
+                <Image
+                  src={post.author.profile.profileImage}
+                  alt={post.author.profile.username ?? "User"}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-6 h-6 bg-gradient-to-br from-pink-400 to-orange-400 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {(post.author.profile?.username ?? 'U')[0].toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <span>
+                By {post.author.profile?.username ?? "Unknown author"}
+              </span>
+            </Link>
             <time dateTime={post.createdAt.toISOString()}>
               {new Date(post.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -90,6 +128,15 @@ export default async function PostDetail({ params }) {
         </div>
 
         <footer className="mt-6 pt-4 border-t border-gray-100">
+          {/* Like button section */}
+          <div className="mb-4">
+            <LikeButton 
+              postId={post.id} 
+              initialLiked={isLikedByUser}
+              initialLikeCount={likeCount}
+            />
+          </div>
+          
           <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Post ID: {post.id}</span>
             <span>

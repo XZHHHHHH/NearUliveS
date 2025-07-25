@@ -25,6 +25,8 @@ model User {
   conversations2   Conversation[] @relation("ConversationUser2")
   Comment          Comment[]      
   Like             Like[]
+  notifications    Notification[]
+  sentNotifications Notification[] @relation("NotificationFrom")
 }
 
 // type without question mark(?) must be declared in neon db table to create a proper data set.
@@ -96,4 +98,16 @@ model Like {
 
   // Ensure a user can only like a post once
   @@unique([postId, userId])
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      // Who receives the notification
+  type       String   // "like" or "comment"
+  postId     Int?     // Which post was liked/commented
+  fromUser   User     @relation("NotificationFrom", fields: [fromUserId], references: [id])
+  fromUserId Int      // Who liked/commented
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }

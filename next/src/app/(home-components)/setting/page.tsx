@@ -41,7 +41,9 @@ export default function SettingsPage() {
         const parsedUser = JSON.parse(storedUser);
         
         // Fetch fresh profile data from API
-        const response = await fetch(`/api/users/profile?userId=${parsedUser.id}`);
+        const response = await fetch(`/api/users/profile?userId=${parsedUser.id}`, {
+          credentials: 'include'
+        });
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
@@ -159,6 +161,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/users/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           userId: user.id,
           username: username.trim() || undefined,

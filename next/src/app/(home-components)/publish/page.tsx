@@ -26,6 +26,7 @@ export default function PublishPage() {
 
     const response = await fetch('/api/upload', {
       method: 'POST',
+      credentials: 'include',
       body: formData,
     });
 
@@ -50,11 +51,12 @@ export default function PublishPage() {
       }
 
       // Create post
-      const response = await fetch('/api/posts', {
+      const response = await fetch('/api/post/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           title,
           content,
