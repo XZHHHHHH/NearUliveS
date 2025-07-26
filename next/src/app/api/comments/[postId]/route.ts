@@ -73,5 +73,30 @@ export async function POST(
       } 
     }
   })
+
+  // Get the post to find the author
+  const post = await prisma.post.findUnique({
+    where: { id: Number(postId) },
+    select: { authorId: true }
+  });
+
+  // Create notification for the post author (only if it's not the user commenting on their own post)
+  if (post && post.authorId !== user.id) {
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: post.authorId,
+          type: 'comment',
+          postId: Number(postId),
+          fromUserId: user.id,
+          message: `${user.email} commented on your post`,
+        } as any, // Temporary type assertion until Prisma types are updated
+      });
+    } catch (notificationError) {
+      console.error('Failed to create notification:', notificationError);
+      // Don't fail the comment operation if notification fails
+    }
+  }
+
   return NextResponse.json(comment, { status: 201 })
 }

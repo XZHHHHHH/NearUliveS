@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import { cookies } from 'next/headers';
+
+const prisma = new PrismaClient();
+
+export async function GET(request: NextRequest) {
+  try {
+    const cookieStore = await cookies();
+    const userEmail = cookieStore.get('userEmail')?.value;
+
+    if (!userEmail) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: userEmail }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Get counts for different notification types
+    const [allCount, likesCount, commentsCount, followsCount] = await Promise.all([
+      prisma.notification.count({
+        where: { userId: user.id, read: false }
+      }),
+      prisma.notification.count({
+        where: { userId: user.id, type: 'like', read: false }
+      }),
+      prisma.notification.count({
+        where: { userId: user.id, type: 'comment', read: false }
+      }),
+      prisma.notification.count({
+        where: { userId: user.id, type: 'follow', read: false }
+      }),
+    ]);
+
+    return NextResponse.json({
+      all: allCount,
+      likes: likesCount,
+      comments: commentsCount,
+      follows: followsCount,
+    });
+  } catch (error) {
+    console.error('Error fetching notification counts:', error);
+    return NextResponse.json({ error: 'Failed to fetch notification counts' }, { status: 500 });
+  }
+}

@@ -63,15 +63,16 @@ export default function PostCard({ post, userprofile, likeCount = 0, isLikedByUs
             </div>
           )}
           <div className="px-3 py-2">
-            <Link href={`/post/${post.id}`} className="block">
-              <h1 className="text-xs font-bold truncate">{post.title}</h1>
-            </Link>
-            <div className="flex items-center justify-between">
-              <Link 
-                href={`/userprofile?userId=${userprofile?.userid}`}
-                className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-                onClick={(e) => e.stopPropagation()}
-              >
+            <h1 className="text-xs font-bold truncate">{post.title}</h1>
+          </div>
+        </Link>
+        <div className="px-3 pb-2">
+          <div className="flex items-center justify-between">
+            <Link 
+              href={`/userprofile?userId=${userprofile?.userid}`}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
                 {userprofile?.profileImage ? (
                   <Image
                     src={userprofile.profileImage}
@@ -98,7 +99,6 @@ export default function PostCard({ post, userprofile, likeCount = 0, isLikedByUs
               </div>
             </div>
           </div>
-        </Link>
       </div>
     </div>
   );

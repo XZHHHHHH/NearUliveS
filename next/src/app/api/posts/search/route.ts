@@ -8,12 +8,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
 
-    if (!query) {
-      return NextResponse.json({ posts: [] });
-    }
+    let whereClause = {};
 
-    const posts = await prisma.post.findMany({
-      where: {
+    if (query && query.trim()) {
+      whereClause = {
         OR: [
           {
             title: {
@@ -28,7 +26,11 @@ export async function GET(request: NextRequest) {
             }
           }
         ]
-      },
+      };
+    }
+
+    const posts = await prisma.post.findMany({
+      where: whereClause,
       include: {
         author: {
           include: {

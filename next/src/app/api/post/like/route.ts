@@ -52,6 +52,30 @@ export async function POST(req: NextRequest) {
           userId: user.id
         }
       });
+
+      // Get the post to find the author
+      const post = await prisma.post.findUnique({
+        where: { id: parseInt(postId) },
+        select: { authorId: true }
+      });
+
+      // Create notification for the post author (only if it's not the user liking their own post)
+      if (post && post.authorId !== user.id) {
+        try {
+          await prisma.notification.create({
+            data: {
+              userId: post.authorId,
+              type: 'like',
+              postId: parseInt(postId),
+              fromUserId: user.id,
+              message: `${user.email} liked your post`,
+            } as any, // Temporary type assertion until Prisma types are updated
+          });
+        } catch (notificationError) {
+          console.error('Failed to create notification:', notificationError);
+          // Don't fail the like operation if notification fails
+        }
+      }
       
       // Get updated like count
       const likeCount = await prisma.like.count({

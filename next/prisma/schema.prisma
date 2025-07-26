@@ -96,6 +96,7 @@ model Notification {
   type       String
   postId     Int?
   fromUserId Int
+  message    String?
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
   fromUser   User     @relation("NotificationFrom", fields: [fromUserId], references: [id])
