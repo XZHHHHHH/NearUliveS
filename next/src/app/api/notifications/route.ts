@@ -27,14 +27,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type'); // 'all', 'like', 'comment', 'follow'
 
-    let whereClause: any = {
+    const whereClause: any = {
       userId: user.id,
+      ...(type && type !== 'all' && { type }),
     };
-
-    // Filter by notification type if specified
-    if (type && type !== 'all') {
-      whereClause.type = type;
-    }
 
     const notifications = await prisma.notification.findMany({
       where: whereClause,
