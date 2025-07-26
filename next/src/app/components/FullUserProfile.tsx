@@ -55,7 +55,13 @@ export default function UserProfile({ profile, posts }: Props) {
                 className="border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 bg-white cursor-pointer transform hover:scale-[1.02]"
               >
                 {post.imageUrl && (
-                  <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover" />
+                  <Image 
+                    src={post.imageUrl} 
+                    alt={post.title} 
+                    width={400}
+                    height={192}
+                    className="w-full h-48 object-cover" 
+                  />
                 )}
                 <div className="p-4">
                   <h3 className="font-semibold text-lg mb-2 truncate hover:text-blue-600 transition-colors">{post.title}</h3>
