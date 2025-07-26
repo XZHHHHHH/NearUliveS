@@ -1,6 +1,7 @@
 'use client';
 import PostCard from "@/app/components/PostCard";
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Post, User, UserProfile, Like } from '@prisma/client';
 
 type PostWithAuthorAndLikes = Post & {
@@ -15,24 +16,32 @@ type PostWithAuthorAndLikes = Post & {
 // 1. homepage handles postgird UI and data fecting 
 // 2. while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
 export default function HomePage() {
+  const router = useRouter();
   const [posts, setPosts] = useState<PostWithAuthorAndLikes[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get current user from localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const fetchCurrentUserAndPosts = async () => {
       try {
-        setCurrentUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Error parsing stored user:', e);
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentUser(data.user);
+          await fetchPosts();
+        } else {
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+        router.replace('/login');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    // Fetch posts
-    fetchPosts();
-  }, []);
+    fetchCurrentUserAndPosts();
+  }, [router]);
 
   const fetchPosts = async () => {
     try {
@@ -45,8 +54,6 @@ export default function HomePage() {
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

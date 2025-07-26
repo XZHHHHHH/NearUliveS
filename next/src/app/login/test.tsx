@@ -20,7 +20,6 @@ function stubFetch(body: unknown, ok: boolean, status = ok ? 200 : 400) {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  localStorage.clear();
 });
 
 describe('<Login />', () => {
@@ -47,7 +46,6 @@ describe('<Login />', () => {
     // wait until button re‑enables (state update flushed)
     await screen.findByRole('button', { name: /log in/i });
 
-    expect(localStorage.getItem('user')).toEqual(JSON.stringify(fakeUser));
     expect(pushMock).toHaveBeenCalledWith('/home');
   });
 

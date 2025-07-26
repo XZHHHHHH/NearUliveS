@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
-
-const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
@@ -62,7 +60,15 @@ export async function POST(req: NextRequest) {
       // Create notification for the post author (only if it's not the user liking their own post)
       if (post && post.authorId !== user.id) {
         try {
-          await prisma.notification.create({
+          console.log('Creating like notification:', {
+            userId: post.authorId,
+            type: 'like',
+            postId: parseInt(postId),
+            fromUserId: user.id,
+            message: `${user.email} liked your post`,
+          });
+          
+          const notification = await prisma.notification.create({
             data: {
               userId: post.authorId,
               type: 'like',
@@ -71,10 +77,19 @@ export async function POST(req: NextRequest) {
               message: `${user.email} liked your post`,
             } as any, // Temporary type assertion until Prisma types are updated
           });
+          
+          console.log('Notification created successfully:', notification);
         } catch (notificationError) {
           console.error('Failed to create notification:', notificationError);
           // Don't fail the like operation if notification fails
         }
+      } else {
+        console.log('No notification created:', {
+          postExists: !!post,
+          postAuthorId: post?.authorId,
+          currentUserId: user.id,
+          isOwnPost: post?.authorId === user.id
+        });
       }
       
       // Get updated like count

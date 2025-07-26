@@ -1,24 +1,50 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ChatList, {UserWithProfile} from '@/app/(home-components)/chat/ChatList';
 import ChatWindow from '@/app/(home-components)/chat/ChatWindow';
 
 
 export default function ChatPage() {
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState<UserWithProfile | null>(null);
   const [selected, setSelected] = useState<{
     conversationId: number;
     user: UserWithProfile;
   } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      setCurrentUser(JSON.parse(stored) as UserWithProfile);
-    }
-  }, []);
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentUser(data.user as UserWithProfile);
+        } else {
+          router.replace('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+        router.replace('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentUser();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Loading...
+      </div>
+    );
+  }
 
   if (!currentUser) {
+    // This will be rendered briefly before the redirect happens
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
         Please{' '}

@@ -22,16 +22,24 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Get current user from localStorage
+  // Get current user from server-side authentication
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const fetchCurrentUser = async () => {
       try {
-        setCurrentUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Error parsing stored user:', e);
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentUser(data.user);
+        } else {
+          // User not authenticated, but search should still work
+          console.log('User not authenticated for search');
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
       }
-    }
+    };
+
+    fetchCurrentUser();
   }, []);
 
   useEffect(() => {

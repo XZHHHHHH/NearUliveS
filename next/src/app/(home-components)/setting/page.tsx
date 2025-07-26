@@ -31,39 +31,20 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        // Get user from localStorage first
-        const storedUser = localStorage.getItem('user');
-        if (!storedUser) {
-          router.replace('/login');
-          return;
-        }
-
-        const parsedUser = JSON.parse(storedUser);
-        
-        // Fetch fresh profile data from API
-        const response = await fetch(`/api/users/profile?userId=${parsedUser.id}`, {
-          credentials: 'include'
-        });
+        const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user);
-          setUsername(data.user.profile?.username || '');
-          setBio(data.user.profile?.bio || '');
+          const userProfile = data.user;
+          setUser(userProfile);
+          setUsername(userProfile.profile?.username || '');
+          setBio(userProfile.profile?.bio || '');
           setImageError(false);
           
-          // Set preview URL from existing profile image
-          if (data.user.profile?.profileImage) {
-            setPreviewUrl(getImageUrl(data.user.profile.profileImage));
+          if (userProfile.profile?.profileImage) {
+            setPreviewUrl(getImageUrl(userProfile.profile.profileImage));
           }
         } else {
-          // Fallback to localStorage data
-          setUser(parsedUser);
-          setUsername(parsedUser.profile?.username || '');
-          setBio(parsedUser.profile?.bio || '');
-          setImageError(false);
-          if (parsedUser.profile?.profileImage) {
-            setPreviewUrl(getImageUrl(parsedUser.profile.profileImage));
-          }
+          router.replace('/login');
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -176,8 +157,7 @@ export default function SettingsPage() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      // Update local storage and state with new user data
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Update state with new user data
       setUser(data.user);
       setIsEditing(false);
       setSelectedFile(null);
@@ -205,9 +185,14 @@ export default function SettingsPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    router.replace('/login');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Failed to logout', error);
+    } finally {
+      router.replace('/login');
+    }
   };
 
   if (loading) {

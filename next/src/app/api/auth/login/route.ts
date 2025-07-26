@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
     try {
@@ -31,6 +29,7 @@ export async function POST(request: NextRequest) {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
+            path: '/',
             maxAge: 7 * 24 * 60 * 60 // 7 days
         });
 
@@ -60,14 +59,11 @@ async function login(email: string, password: string) {
     }
 
     // Return complete user data needed for chat
+    const { password: _, ...userWithoutPassword } = user;
     return {
         success: true,
         message: "Login successful",
         status: 200,
-        user: {
-            id: user.id,
-            email: user.email,
-            profile: user.profile
-        },
+        user: userWithoutPassword,
     };
 }

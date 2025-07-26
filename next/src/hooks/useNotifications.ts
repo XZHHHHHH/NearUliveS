@@ -68,6 +68,10 @@ export function useNotifications(type: string = 'all') {
               : notification
           )
         );
+        
+        // Trigger a custom event to refresh counts
+        window.dispatchEvent(new CustomEvent('notificationsUpdated'));
+        console.log('Notifications marked as read, triggering count refresh');
       }
     } catch (err) {
       console.error('Failed to mark notifications as read:', err);

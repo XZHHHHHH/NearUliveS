@@ -35,8 +35,7 @@ export default function Login() {
           setEmailError(data.error || 'Login failed');
         }
       } else {
-        console.log('Login success, storing user →', data.user);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        console.log('Login success');
         router.push('/home');
       }
     } catch (err) {
