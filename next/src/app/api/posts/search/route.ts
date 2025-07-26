@@ -36,6 +36,11 @@ export async function GET(request: NextRequest) {
           include: {
             profile: true
           }
+        },
+        Like: {
+          select: {
+            userId: true
+          }
         }
       },
       orderBy: {

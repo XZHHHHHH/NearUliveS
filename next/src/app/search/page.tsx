@@ -5,20 +5,34 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { IoHomeOutline } from "react-icons/io5";
 import PostCard from '@/app/components/PostCard';
-import type { Post, User, UserProfile } from '@prisma/client';
+import type { Post, User, UserProfile, Like } from '@prisma/client';
 
-type PostWithAuthor = Post & {
+type PostWithAuthorAndLikes = Post & {
   author: User & {
     profile: UserProfile | null;
   };
+  Like: Pick<Like, 'userId'>[];
 };
 
 function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
+  const [posts, setPosts] = useState<PostWithAuthorAndLikes[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Get current user from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setCurrentUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Error parsing stored user:', e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const searchPosts = async () => {
@@ -79,13 +93,20 @@ function SearchResults() {
         </div>
       ) : (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
-          {posts.map((post) => (
-            <PostCard 
-              key={post.id} 
-              post={post} 
-              userprofile={post.author.profile || { id: 0, bio: null, profileImage: null, username: post.author.email, createdAt: new Date(), userid: post.author.id }} 
-            />
-          ))}
+          {posts.map((post) => {
+            const likeCount = post.Like.length;
+            const isLikedByUser = currentUser ? post.Like.some(like => like.userId === currentUser.id) : false;
+            
+            return (
+              <PostCard 
+                key={post.id} 
+                post={post} 
+                userprofile={post.author.profile || { id: 0, bio: null, profileImage: null, username: post.author.email, createdAt: new Date(), userid: post.author.id }} 
+                likeCount={likeCount}
+                isLikedByUser={isLikedByUser}
+              />
+            );
+          })}
         </div>
       )}
     </main>

@@ -15,7 +15,12 @@ type Props = {
 }
 
 {/*postcard appearance*/}
-export default function PostCard({ post, userprofile, likeCount = 0, isLikedByUser = false }: Props) {
+export default function PostCard({ 
+  post, 
+  userprofile, 
+  likeCount = 0, 
+  isLikedByUser = false
+}: Props) {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -30,7 +35,7 @@ export default function PostCard({ post, userprofile, likeCount = 0, isLikedByUs
 
   return (
     <div className="flex justify-center">
-      <div className="w-[200px] bg-white rounded-4xl overflow-hidden shadow-md transition-transform duration-200 ease-in-out hover:scale-105 hover:shadow-lg">
+      <div className="w-[200px] bg-white rounded-4xl overflow-hidden shadow-md transition-transform duration-200 ease-in-out hover:scale-105 hover:shadow-lg relative">
         <Link href={`/post/${post.id}`} className="block">
           {post.imageUrl && !imageError ? (
             isBase64Image(post.imageUrl) ? (

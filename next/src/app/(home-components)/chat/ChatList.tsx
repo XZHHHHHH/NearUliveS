@@ -10,7 +10,7 @@ type MessageWithSender = Message & { sender: UserWithProfile };
 interface ChatThread {
   conversationId: number;
   user: UserWithProfile;
-  lastMessage: MessageWithSender;
+  lastMessage: MessageWithSender | null;
   unreadCount: number;
 }
 
@@ -280,14 +280,14 @@ export default function ChatList({
                         {getUserDisplayData(thread.user).username}
                       </p>
                       <p className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                        {new Date(thread.lastMessage.createdAt).toLocaleTimeString([], {
+                        {thread.lastMessage?.createdAt ? new Date(thread.lastMessage.createdAt).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit'
-                        })}
+                        }) : ''}
                       </p>
                     </div>
                     <p className="text-sm text-gray-600 truncate">
-                      {thread.lastMessage.content}
+                      {thread.lastMessage?.content || 'No messages yet'}
                     </p>
                   </div>
                 </div>
