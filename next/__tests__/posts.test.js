@@ -1,5 +1,3 @@
-// posts.test.js - Post Management Testing
-
 describe('Post Management', () => {
   it('validates post title', () => {
     const isValidTitle = (title) => {
