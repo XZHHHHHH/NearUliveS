@@ -26,7 +26,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </header>
       <div className="flex flex-row h-screen bg-yellow-50">
         <aside className="fixed top-30 w-60">
-          {/* Side bar here */}
           <SideBar />
         </aside>
         <main className="ml-45 mt-30 flex-1 overflow-y-auto">{children}</main>

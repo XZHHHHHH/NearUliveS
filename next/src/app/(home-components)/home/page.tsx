@@ -13,8 +13,6 @@ type PostWithAuthorAndLikes = Post & {
   isLikedByUser: boolean;
 };
 
-// 1. homepage handles postgird UI and data fecting 
-// 2. while postcard.tsx handles the UI rendering(if data fetching inside postcard, will cause)
 export default function HomePage() {
   const router = useRouter();
   const [posts, setPosts] = useState<PostWithAuthorAndLikes[]>([]);
@@ -70,7 +68,6 @@ export default function HomePage() {
 
   return (
     <main>
-      {/*grid-layout and auto adjust the postcard size while its clickable area is fixed with its size */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 p-8">
         {posts.map((post) => (
           <PostCard 

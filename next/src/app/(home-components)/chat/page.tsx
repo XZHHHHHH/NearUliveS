@@ -44,7 +44,6 @@ export default function ChatPage() {
   }
 
   if (!currentUser) {
-    // This will be rendered briefly before the redirect happens
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
         Please{' '}
@@ -57,7 +56,6 @@ export default function ChatPage() {
 
   return (
     <main className="flex h-screen bg-gray-100 overflow-hidden">
-      {/* Sidebar */}
       <aside className="w-80 min-w-[320px] flex-shrink-0 bg-white shadow-lg">
         <ChatList
           currentUser={currentUser}
@@ -66,7 +64,6 @@ export default function ChatPage() {
         />
       </aside>
       
-      {/* Main Chat Area */}
       <section className="flex-1 flex flex-col min-w-0">
         <ChatWindow
           currentUser={currentUser}

@@ -16,14 +16,14 @@ export default function PublishPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
+      // Validate those upload file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         setError('Invalid file type. Only images are allowed.');
         return;
       }
 
-      // Validate file size (max 5MB)
+      // Validate the file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         setError('File too large. Maximum size is 5MB.');
@@ -32,7 +32,6 @@ export default function PublishPage() {
 
       setError('');
       setImageFile(file);
-      // Create preview URL
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
     }
@@ -68,7 +67,6 @@ export default function PublishPage() {
     setUploadProgress(0);
 
     try {
-      // Check if image is required
       if (!imageFile) {
         setError('Please select an image before publishing');
         setIsSubmitting(false);
@@ -77,14 +75,12 @@ export default function PublishPage() {
 
       let imageUrl = null;
       
-      // Upload image (convert to Base64)
       setUploadProgress(50);
       imageUrl = await uploadImage(imageFile);
       console.log('Image converted to Base64 and ready for database storage');
 
       setUploadProgress(75);
 
-      // Create post with Base64 image data
       const response = await fetch('/api/post/create', {
         method: 'POST',
         headers: {
@@ -107,7 +103,6 @@ export default function PublishPage() {
       setUploadProgress(100);
       console.log('Post created successfully with Base64 image data');
       
-      // Clean up preview URL
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
       }

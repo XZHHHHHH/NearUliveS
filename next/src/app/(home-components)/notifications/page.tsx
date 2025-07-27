@@ -11,12 +11,11 @@ export default function NotificationsPage() {
   const router = useRouter();
 
   const handleNotificationClick = async (notification: any) => {
-    // Mark as read if not already read
+    // Mark it read if not already read
     if (!notification.read) {
       await markAsRead([notification.id]);
     }
 
-    // Navigate to the post if it's a post-related notification
     if (notification.postId) {
       router.push(`/post/${notification.postId}`);
     }
@@ -80,12 +79,10 @@ export default function NotificationsPage() {
 
   return (
     <main className="w-full bg-yellow-50 min-h-screen">
-      {/* Header */}
       <div className="p-4 border-b bg-white">
         <h1 className="text-xl font-bold text-center">Notifications</h1>
       </div>
 
-      {/* Tabs */}
       <div className="flex border-b bg-white">
         <button 
           onClick={() => setActiveTab('all')}
@@ -116,7 +113,6 @@ export default function NotificationsPage() {
         </button>
       </div>
 
-      {/* Notifications List */}
       <div className="space-y-2 p-4">
         {notifications.length === 0 ? (
           <div className="p-6 text-center text-gray-500 bg-white rounded-lg">
@@ -134,13 +130,11 @@ export default function NotificationsPage() {
               }`}
             >
               <div className="flex items-start space-x-3">
-                {/* Icon based on notification type */}
                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100">
                   {notification.type === "like" && "❤️"}
                   {notification.type === "comment" && "💬"}
                 </div>
                 
-                {/* Notification Content */}
                 <div className="flex-1">
                   <p className="text-sm">
                     {getNotificationText(notification)}
@@ -150,7 +144,6 @@ export default function NotificationsPage() {
                   </p>
                 </div>
                 
-                {/* Unread indicator */}
                 {!notification.read && (
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
                 )}

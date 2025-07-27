@@ -140,7 +140,6 @@ export default function ChatWindow({
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white shadow-sm">
         <div className="flex items-center space-x-3">
           <img 
@@ -163,7 +162,6 @@ export default function ChatWindow({
         </div>
       </div>
 
-      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
         <div className="p-4 space-y-3">
           {loading && messages.length === 0 ? (
@@ -237,14 +235,12 @@ export default function ChatWindow({
         </div>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="px-4 py-2 bg-red-50 border-t border-red-200">
           <p className="text-red-600 text-sm">{error}</p>
         </div>
       )}
 
-      {/* Input Area */}
       <div className="p-4 border-t bg-white">
         <div className="flex items-end space-x-3">
           <div className="flex-1">

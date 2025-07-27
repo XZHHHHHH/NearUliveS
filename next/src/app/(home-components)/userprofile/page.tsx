@@ -12,36 +12,31 @@ export default async function UserProfilePage({
   const params = await searchParams;
   const userId = params.userId;
   
-  //Use await in order to wait for the cookies() to return the promise before applying get() on it
   const cookieStore = await cookies(); 
   const userEmail = cookieStore.get("userEmail")?.value;
 
-  // not useremail found, then shown login failure message
   if (!userEmail) return <p>Not logged in</p>;
 
   let user;
   
   if (userId) {
-    // Show specific user's profile
     user = await prisma.user.findUnique({
       where: { id: parseInt(userId) },
       include: { 
         posts: {
           include: {
-            Like: true // Include likes for each post
-          }
+            Like: true }
         }, 
         profile: true 
       },
     });
   } else {
-    // Show current logged-in user's profile
     user = await prisma.user.findUnique({
       where: { email: userEmail },
       include: { 
         posts: {
           include: {
-            Like: true // Include likes for each post
+            Like: true
           }
         }, 
         profile: true 

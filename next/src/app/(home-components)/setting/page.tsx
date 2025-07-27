@@ -60,13 +60,11 @@ export default function SettingsPage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setError('Please select an image file');
         return;
       }
 
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError('File size must be less than 5MB');
         return;
@@ -75,7 +73,6 @@ export default function SettingsPage() {
       setSelectedFile(file);
       setError('');
       
-      // Create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrl(e.target?.result as string);
@@ -134,7 +131,6 @@ export default function SettingsPage() {
     try {
       let profileImageFileName = user.profile?.profileImage;
 
-      // Upload image if a new file is selected
       if (selectedFile) {
         profileImageFileName = await uploadImage(selectedFile);
       }
@@ -157,24 +153,23 @@ export default function SettingsPage() {
         throw new Error(data.error || 'Failed to update profile');
       }
 
-      // Update state with new user data
+
+
       setUser(data.user);
       setIsEditing(false);
       setSelectedFile(null);
       setUploadProgress(0);
       setImageError(false);
 
-      // Update preview URL to show the saved image
       if (data.user.profile?.profileImage) {
         setPreviewUrl(getImageUrl(data.user.profile.profileImage));
       }
 
-      // Dispatch custom event to notify other components
       window.dispatchEvent(new CustomEvent('profileUpdated', {
         detail: { user: data.user }
       }));
 
-      // Clear any previous errors
+    
       setError('');
 
     } catch (err) {
@@ -273,7 +268,6 @@ export default function SettingsPage() {
                           Profile Image
                         </label>
                         
-                        {/* Preview Area - Above the browse button */}
                         <div className="mb-4">
                           <div className="flex items-center space-x-4">
                             <div className="h-20 w-20 rounded-full border-2 border-gray-300 bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">

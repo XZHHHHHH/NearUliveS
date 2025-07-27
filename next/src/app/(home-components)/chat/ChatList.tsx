@@ -133,7 +133,6 @@ export default function ChatList({
 
   return (
     <div className="h-full flex flex-col bg-white border-r border-gray-200">
-      {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">Messages</h2>
@@ -149,7 +148,6 @@ export default function ChatList({
         </div>
       </div>
 
-      {/* User Search Modal */}
       {showUserSearch && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-6 w-96 max-w-[90vw] max-h-[80vh] flex flex-col">
@@ -235,7 +233,6 @@ export default function ChatList({
         </div>
       )}
 
-      {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center py-8">
