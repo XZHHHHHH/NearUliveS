@@ -30,8 +30,6 @@ export default function NotificationsPage() {
         return `${username} liked your post`;
       case 'comment':
         return `${username} commented on your post`;
-      case 'follow':
-        return `${username} started following you`;
       default:
         return `${username} interacted with your content`;
     }
@@ -91,27 +89,30 @@ export default function NotificationsPage() {
       <div className="flex border-b bg-white">
         <button 
           onClick={() => setActiveTab('all')}
-          className={`flex-1 py-3 ${activeTab === 'all' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+          className={`flex-1 py-4 px-2 text-center transition-colors ${activeTab === 'all' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
         >
-          All <span className="ml-1 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.all}</span>
+          <div className="flex items-center justify-center">
+            <span className="font-medium">All</span>
+            <span className="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.all}</span>
+          </div>
         </button>
         <button 
           onClick={() => setActiveTab('like')}
-          className={`flex-1 py-3 ${activeTab === 'like' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+          className={`flex-1 py-4 px-2 text-center transition-colors ${activeTab === 'like' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
         >
-          Likes <span className="ml-1 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.likes}</span>
+          <div className="flex items-center justify-center">
+            <span className="font-medium">Likes</span>
+            <span className="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.likes}</span>
+          </div>
         </button>
         <button 
           onClick={() => setActiveTab('comment')}
-          className={`flex-1 py-3 ${activeTab === 'comment' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+          className={`flex-1 py-4 px-2 text-center transition-colors ${activeTab === 'comment' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}
         >
-          Comments <span className="ml-1 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.comments}</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('follow')}
-          className={`flex-1 py-3 ${activeTab === 'follow' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-        >
-          Follows <span className="ml-1 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.follows}</span>
+          <div className="flex items-center justify-center">
+            <span className="font-medium">Comments</span>
+            <span className="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{counts.comments}</span>
+          </div>
         </button>
       </div>
 
@@ -137,7 +138,6 @@ export default function NotificationsPage() {
                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100">
                   {notification.type === "like" && "❤️"}
                   {notification.type === "comment" && "💬"}
-                  {notification.type === "follow" && "👤"}
                 </div>
                 
                 {/* Notification Content */}

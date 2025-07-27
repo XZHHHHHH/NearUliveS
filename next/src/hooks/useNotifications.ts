@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 export interface Notification {
   id: number;
   userId: number;
-  type: 'like' | 'comment' | 'follow';
+  type: 'like' | 'comment';
   postId?: number;
   fromUserId: number;
   read: boolean;
@@ -22,7 +22,6 @@ export interface NotificationCounts {
   all: number;
   likes: number;
   comments: number;
-  follows: number;
 }
 
 export function useNotifications(type: string = 'all') {
@@ -96,7 +95,6 @@ export function useNotificationCounts() {
     all: 0,
     likes: 0,
     comments: 0,
-    follows: 0,
   });
 
   const fetchCounts = async () => {

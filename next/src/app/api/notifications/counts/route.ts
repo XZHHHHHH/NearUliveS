@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get counts for different notification types
-    const [allCount, likesCount, commentsCount, followsCount] = await Promise.all([
+    const [allCount, likesCount, commentsCount] = await Promise.all([
       prisma.notification.count({
         where: { userId: user.id, read: false }
       }),
@@ -30,16 +30,12 @@ export async function GET(request: NextRequest) {
       prisma.notification.count({
         where: { userId: user.id, type: 'comment', read: false }
       }),
-      prisma.notification.count({
-        where: { userId: user.id, type: 'follow', read: false }
-      }),
     ]);
 
     return NextResponse.json({
       all: allCount,
       likes: likesCount,
       comments: commentsCount,
-      follows: followsCount,
     });
   } catch (error) {
     console.error('Error fetching notification counts:', error);
