@@ -143,16 +143,15 @@ export default function ChatWindow({
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-sm font-medium text-white shadow-sm">
-            {getUserDisplayData(receiver).avatarLetter}
-          </div>
+          <img 
+            src={getUserDisplayData(receiver).profileImage} 
+            alt={getUserDisplayData(receiver).username} 
+            className="w-11 h-11 rounded-full object-cover"
+          />
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 truncate">
               {getUserDisplayData(receiver).username}
             </h3>
-            {receiver.profile?.username && (
-              <p className="text-sm text-gray-500 truncate">{receiver.email}</p>
-            )}
           </div>
           <div className="flex items-center space-x-2">
             <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">

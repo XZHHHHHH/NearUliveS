@@ -213,16 +213,15 @@ export default function ChatList({
                       onClick={() => startConversation(user)}
                       className="p-3 hover:bg-blue-50 cursor-pointer rounded-lg transition-all duration-200 flex items-center group border border-transparent hover:border-blue-200"
                     >
-                      <div className="w-11 h-11 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-sm font-medium text-white shadow-sm">
-                        {getUserDisplayData(user).avatarLetter}
-                      </div>
+                      <img 
+                        src={getUserDisplayData(user).profileImage} 
+                        alt={getUserDisplayData(user).username} 
+                        className="w-11 h-11 rounded-full object-cover shadow-sm"
+                      />
                       <div className="ml-3 flex-1 min-w-0">
                         <p className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors truncate">
                           {getUserDisplayData(user).username}
                         </p>
-                        {user.profile?.username && (
-                          <p className="text-sm text-gray-500 truncate">{user.email}</p>
-                        )}
                       </div>
                       <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -265,9 +264,11 @@ export default function ChatList({
               >
                 <div className="flex items-center">
                   <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-sm font-medium text-white shadow-sm">
-                      {getUserDisplayData(thread.user).avatarLetter}
-                    </div>
+                    <img 
+                      src={getUserDisplayData(thread.user).profileImage} 
+                      alt={getUserDisplayData(thread.user).username} 
+                      className="w-12 h-12 rounded-full object-cover shadow-sm"
+                    />
                     {thread.unreadCount > 0 && (
                       <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium">
                         {thread.unreadCount > 9 ? '9+' : thread.unreadCount}

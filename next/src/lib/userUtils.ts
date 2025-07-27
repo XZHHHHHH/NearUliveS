@@ -42,7 +42,7 @@ export function getDisplayUsername(user: UserWithProfile | UserWithBasicProfile)
 }
 
 export function getProfileImage(user: UserWithProfile | UserWithBasicProfile): string {
-  return user.profile?.profileImage || '/globe.svg';
+  return getImageUrl(user.profile?.profileImage);
 }
 
 export function getAvatarLetter(user: UserWithProfile | UserWithBasicProfile): string {
@@ -53,7 +53,7 @@ export function getAvatarLetter(user: UserWithProfile | UserWithBasicProfile): s
 export function getUserDisplayData(user: UserWithProfile | UserWithBasicProfile) {
   return {
     username: user.profile?.username || `Nuser${user.id}`,
-    profileImage: user.profile?.profileImage || '/globe.svg',
+    profileImage: getImageUrl(user.profile?.profileImage),
     avatarLetter: (user.profile?.username || `Nuser${user.id}`).charAt(0).toUpperCase(),
     bio: user.profile?.bio || null
   };
